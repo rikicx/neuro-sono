@@ -40,13 +40,25 @@ body::after {
   z-index: 55;
   inset: 0;
   opacity: 0;
-  background: radial-gradient(
-    circle 220px at var(--pointer-x) var(--pointer-y),
-    rgba(174, 239, 232, 0.2) 0,
-    rgba(108, 190, 194, 0.1) 38%,
-    transparent 72%
-  );
+  background:
+    radial-gradient(
+      ellipse 440px 300px at var(--pointer-x) var(--pointer-y),
+      rgba(174, 239, 232, 0.18) 0,
+      rgba(108, 190, 194, 0.09) 42%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 270px 450px at calc(var(--pointer-x) + 85px) calc(var(--pointer-y) - 45px),
+      rgba(111, 199, 203, 0.11) 0,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 520px 210px at calc(var(--pointer-x) - 110px) calc(var(--pointer-y) + 75px),
+      rgba(194, 244, 235, 0.08) 0,
+      transparent 76%
+    );
   content: "";
+  filter: blur(8px);
   mix-blend-mode: screen;
   pointer-events: none;
   transition: opacity 260ms ease;
