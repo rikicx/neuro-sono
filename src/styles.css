@@ -406,8 +406,50 @@ svg {
   will-change: transform, opacity;
 }
 
-.hero-wave path:last-child {
+.hero-wave path {
+  transform-box: fill-box;
+  transform-origin: center;
+  vector-effect: non-scaling-stroke;
+}
+
+.hero-wave-line-a {
+  animation: wave-drift-a 8s ease-in-out infinite;
+}
+
+.hero-wave-line-b {
   opacity: 0.35;
+  animation: wave-drift-b 10s ease-in-out infinite;
+}
+
+.hero-wave-pulse {
+  opacity: 0.62;
+  stroke: #d4fff7;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 90 520;
+  filter: drop-shadow(0 0 5px rgba(171, 255, 239, 0.55));
+}
+
+.hero-wave-pulse-a {
+  animation: wave-drift-a 8s ease-in-out infinite, wave-pulse 6.5s linear infinite;
+}
+
+.hero-wave-pulse-b {
+  animation: wave-drift-b 10s ease-in-out infinite, wave-pulse 7.5s -3.75s linear infinite;
+}
+
+@keyframes wave-drift-a {
+  0%, 100% { transform: translate3d(-1.5%, 0, 0) scaleX(1.03); }
+  50% { transform: translate3d(1.5%, -9px, 0) scaleX(0.99); }
+}
+
+@keyframes wave-drift-b {
+  0%, 100% { transform: translate3d(1.2%, -3px, 0) scaleX(0.99); }
+  50% { transform: translate3d(-1.4%, 8px, 0) scaleX(1.035); }
+}
+
+@keyframes wave-pulse {
+  to { stroke-dashoffset: -1380; }
 }
 
 .hero-content {
@@ -1433,14 +1475,31 @@ svg {
 }
 
 .footer-bottom {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
   margin-top: 90px;
-  justify-content: space-between;
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+.footer-bottom > :nth-child(2) {
+  text-align: center;
+}
+
+.footer-signature {
+  justify-self: end;
+  color: rgba(255, 255, 255, 0.68);
+  transition: color 180ms ease;
+}
+
+.footer-signature:hover,
+.footer-signature:focus-visible {
+  color: var(--accent);
 }
 
 .whatsapp-float {
@@ -2050,7 +2109,13 @@ svg {
   .exam-banner .button { width: 100%; }
   .site-footer { padding-top: 55px; }
   .footer-grid { gap: 42px; }
-  .footer-bottom { margin-top: 65px; }
+  .footer-bottom {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 65px;
+  }
+  .footer-bottom > :nth-child(2) { text-align: left; }
+  .footer-signature { justify-self: start; }
   .whatsapp-float { right: 16px; bottom: 16px; width: 52px; height: 52px; }
   body::after { display: none; }
 }
