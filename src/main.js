@@ -8,6 +8,7 @@ const menuLinks = [...menuOverlay.querySelectorAll("a[href^='#']")];
 const revealItems = [...document.querySelectorAll("[data-reveal]")];
 const lineMasks = [...document.querySelectorAll(".line-mask")];
 const parallaxItems = [...document.querySelectorAll("[data-parallax]")];
+const scrollZoomItems = [...document.querySelectorAll("[data-scroll-zoom]")];
 const story = document.querySelector("[data-story]");
 const storySteps = [...document.querySelectorAll("[data-story-step]")];
 const storyCurrent = document.querySelector("[data-story-current]");
@@ -73,6 +74,14 @@ const updateScrollEffects = () => {
       if (rect.bottom < -200 || rect.top > window.innerHeight + 200) return;
       const offset = (window.innerHeight / 2 - (rect.top + rect.height / 2)) * speed;
       item.style.setProperty("--parallax-y", `${offset.toFixed(1)}px`);
+    });
+
+    scrollZoomItems.forEach((item) => {
+      const container = item.closest("section") || item.parentElement;
+      const rect = container.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, -rect.top / Math.max(rect.height, 1)));
+      item.style.setProperty("--scroll-zoom", (1 + progress * 0.13).toFixed(3));
+      item.style.setProperty("--zoom-y", `${(progress * 34).toFixed(1)}px`);
     });
   }
 

@@ -2,6 +2,11 @@
 
 Conceito de repaginação do site da Clínica Neuro-Sono, desenvolvido em Vite e preparado para publicação na Vercel.
 
+## Páginas
+
+- `/` — página inicial
+- `/equipe/` — corpo clínico e equipes técnicas
+
 ## Desenvolvimento local
 
 ```bash
