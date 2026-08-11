@@ -310,7 +310,6 @@ svg {
   --hero-media-scale: 1.04;
   --hero-media-y: 0px;
   --hero-wave-opacity: 0.35;
-  --hero-wash-opacity: 0;
   position: relative;
   height: 165svh;
   min-height: 980px;
@@ -353,15 +352,6 @@ svg {
   opacity: 0.09;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
   mix-blend-mode: soft-light;
-  pointer-events: none;
-}
-
-.hero-exit-wash {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  opacity: var(--hero-wash-opacity);
-  background: var(--paper);
   pointer-events: none;
 }
 
@@ -542,6 +532,7 @@ svg {
   align-items: center;
   gap: 10px;
   color: rgba(255, 255, 255, 0.6);
+  opacity: var(--hero-content-opacity);
   font-size: 9px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -589,9 +580,9 @@ svg {
 
 .intro-scene {
   --intro-symbol-x: 0vw;
-  --intro-symbol-scale: 2.7;
-  --intro-symbol-blur: 22px;
-  --intro-symbol-opacity: 0.56;
+  --intro-symbol-scale: 1.7;
+  --intro-symbol-blur: 14px;
+  --intro-symbol-opacity: 0.68;
   --intro-copy-opacity: 0;
   --intro-copy-y: 90px;
   height: 220vh;
@@ -634,6 +625,15 @@ svg {
 .intro-symbol i:nth-child(2) { transform: rotate(90deg); }
 .intro-symbol i:nth-child(3) { transform: rotate(180deg); }
 .intro-symbol i:nth-child(4) { transform: rotate(270deg); }
+
+.intro-symbol::after {
+  position: absolute;
+  inset: 40%;
+  content: "";
+  background: rgba(23, 77, 113, 0.28);
+  border-radius: 50%;
+  box-shadow: 0 0 80px rgba(23, 77, 113, 0.2);
+}
 
 .intro-meta,
 .intro-copy-stage {
@@ -2042,7 +2042,6 @@ svg {
   .hero-stage { position: relative; height: auto; min-height: 100vh; }
   .hero-content { opacity: 1; transform: none; }
   .hero h1 .line-mask { transform: none; }
-  .hero-exit-wash { display: none; }
   .intro-scene { height: auto; min-height: 0; }
   .intro-sticky { position: relative; height: auto; min-height: 0; padding-block: 140px; }
   .intro-symbol { opacity: 0.14; filter: none; transform: translate(-50%, -50%) scale(0.8); }

@@ -99,7 +99,6 @@ const updateScrollEffects = () => {
       heroScene.style.setProperty("--hero-media-scale", (1.04 + progress * 0.2).toFixed(3));
       heroScene.style.setProperty("--hero-media-y", `${(progress * 52).toFixed(1)}px`);
       heroScene.style.setProperty("--hero-wave-opacity", (0.35 * (1 - smoothstep(0.35, 0.82, progress))).toFixed(3));
-      heroScene.style.setProperty("--hero-wash-opacity", smoothstep(0.78, 1, progress).toFixed(3));
     }
 
     if (introScene && introSymbol) {
@@ -107,9 +106,9 @@ const updateScrollEffects = () => {
       const settle = smoothstep(0.04, 0.64, progress);
       const copy = smoothstep(0.2, 0.5, progress);
       introScene.style.setProperty("--intro-symbol-x", `${(-settle * 36).toFixed(2)}vw`);
-      introScene.style.setProperty("--intro-symbol-scale", (2.7 - settle * 2.02).toFixed(3));
-      introScene.style.setProperty("--intro-symbol-blur", `${(22 - settle * 22).toFixed(1)}px`);
-      introScene.style.setProperty("--intro-symbol-opacity", (0.56 - settle * 0.24).toFixed(3));
+      introScene.style.setProperty("--intro-symbol-scale", (1.7 - settle * 1.02).toFixed(3));
+      introScene.style.setProperty("--intro-symbol-blur", `${(14 - settle * 14).toFixed(1)}px`);
+      introScene.style.setProperty("--intro-symbol-opacity", (0.68 - settle * 0.36).toFixed(3));
       introScene.style.setProperty("--intro-copy-opacity", copy.toFixed(3));
       introScene.style.setProperty("--intro-copy-y", `${((1 - copy) * 90).toFixed(1)}px`);
     }
