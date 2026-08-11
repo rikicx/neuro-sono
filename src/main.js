@@ -13,6 +13,27 @@ const story = document.querySelector("[data-story]");
 const storySteps = [...document.querySelectorAll("[data-story-step]")];
 const storyCurrent = document.querySelector("[data-story-current]");
 const storyProgress = document.querySelector("[data-story-progress]");
+const heroScene = document.querySelector("[data-hero-scene]");
+const introScene = document.querySelector("[data-intro-scene]");
+const introSymbol = introScene?.querySelector(".intro-symbol");
+const storyOrbit = story?.querySelector(".story-orbit");
+const storyScanline = story?.querySelector(".story-scanline");
+const examsScene = document.querySelector("[data-exams-scene]");
+const examTrack = document.querySelector("[data-exam-track]");
+const examProgress = document.querySelector("[data-exam-progress]");
+
+const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+const smoothstep = (start, end, value) => {
+  const progress = clamp((value - start) / Math.max(end - start, 0.0001));
+  return progress * progress * (3 - 2 * progress);
+};
+
+const getSceneProgress = (element) => {
+  if (!element) return 0;
+  const rect = element.getBoundingClientRect();
+  const scrollable = Math.max(element.offsetHeight - window.innerHeight, 1);
+  return clamp(-rect.top / scrollable);
+};
 
 document.querySelector("[data-year]").textContent = new Date().getFullYear();
 
@@ -68,6 +89,31 @@ const updateScrollEffects = () => {
   header.classList.toggle("is-scrolled", scrollY > 32);
 
   if (!reducedMotion.matches && window.innerWidth > 760) {
+    if (heroScene) {
+      const progress = getSceneProgress(heroScene);
+      const exit = smoothstep(0.18, 0.86, progress);
+      heroScene.style.setProperty("--hero-content-opacity", (1 - smoothstep(0.2, 0.78, progress)).toFixed(3));
+      heroScene.style.setProperty("--hero-content-y", `${(-72 * exit).toFixed(1)}px`);
+      heroScene.style.setProperty("--hero-line-one-x", `${(-window.innerWidth * 0.17 * exit).toFixed(1)}px`);
+      heroScene.style.setProperty("--hero-line-two-x", `${(window.innerWidth * 0.13 * exit).toFixed(1)}px`);
+      heroScene.style.setProperty("--hero-media-scale", (1.04 + progress * 0.2).toFixed(3));
+      heroScene.style.setProperty("--hero-media-y", `${(progress * 52).toFixed(1)}px`);
+      heroScene.style.setProperty("--hero-wave-opacity", (0.35 * (1 - smoothstep(0.35, 0.82, progress))).toFixed(3));
+      heroScene.style.setProperty("--hero-wash-opacity", smoothstep(0.78, 1, progress).toFixed(3));
+    }
+
+    if (introScene && introSymbol) {
+      const progress = getSceneProgress(introScene);
+      const settle = smoothstep(0.04, 0.64, progress);
+      const copy = smoothstep(0.2, 0.5, progress);
+      introScene.style.setProperty("--intro-symbol-x", `${(-settle * 36).toFixed(2)}vw`);
+      introScene.style.setProperty("--intro-symbol-scale", (2.7 - settle * 2.02).toFixed(3));
+      introScene.style.setProperty("--intro-symbol-blur", `${(22 - settle * 22).toFixed(1)}px`);
+      introScene.style.setProperty("--intro-symbol-opacity", (0.56 - settle * 0.24).toFixed(3));
+      introScene.style.setProperty("--intro-copy-opacity", copy.toFixed(3));
+      introScene.style.setProperty("--intro-copy-y", `${((1 - copy) * 90).toFixed(1)}px`);
+    }
+
     parallaxItems.forEach((item) => {
       const speed = Number(item.dataset.parallax || 0);
       const rect = item.parentElement.getBoundingClientRect();
@@ -83,16 +129,55 @@ const updateScrollEffects = () => {
       item.style.setProperty("--scroll-zoom", (1 + progress * 0.13).toFixed(3));
       item.style.setProperty("--zoom-y", `${(progress * 34).toFixed(1)}px`);
     });
-  }
 
-  if (story && window.innerWidth > 760 && !reducedMotion.matches) {
-    const rect = story.getBoundingClientRect();
-    const scrollable = story.offsetHeight - window.innerHeight;
-    const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
-    const active = Math.min(storySteps.length - 1, Math.floor(progress * storySteps.length));
-    storySteps.forEach((step, index) => step.classList.toggle("is-active", index === active));
-    storyCurrent.textContent = String(active + 1).padStart(2, "0");
-    storyProgress.style.transform = `scaleX(${progress})`;
+    if (story) {
+      const progress = getSceneProgress(story);
+      const active = Math.min(storySteps.length - 1, Math.floor(Math.min(progress, 0.999) * storySteps.length));
+
+      storySteps.forEach((step, index) => {
+        const phase = progress * storySteps.length - index;
+        const entry = index === 0 ? 1 : smoothstep(-0.28, 0.04, phase);
+        const exit = index === storySteps.length - 1 ? 1 : 1 - smoothstep(0.72, 1.04, phase);
+        const opacity = entry * exit;
+        const y = (1 - entry) * 90 - (1 - exit) * 84;
+        step.style.setProperty("--step-opacity", opacity.toFixed(3));
+        step.style.setProperty("--step-y", `${y.toFixed(1)}px`);
+        step.style.setProperty("--step-clip-top", `${((1 - entry) * 48).toFixed(2)}%`);
+        step.style.setProperty("--step-clip-bottom", `${((1 - exit) * 48).toFixed(2)}%`);
+        step.classList.toggle("is-active", index === active);
+      });
+
+      storyCurrent.textContent = String(active + 1).padStart(2, "0");
+      storyProgress.style.transform = `scaleX(${progress})`;
+      storyOrbit?.style.setProperty("--story-orbit-scale", (0.78 + progress * 1.65).toFixed(3));
+      storyOrbit?.style.setProperty("--story-orbit-rotate", `${(progress * 46).toFixed(1)}deg`);
+      storyOrbit?.style.setProperty("--story-orbit-blur", `${(smoothstep(0.72, 1, progress) * 10).toFixed(1)}px`);
+      storyOrbit?.style.setProperty("--story-orbit-opacity", (1 - smoothstep(0.82, 1, progress) * 0.48).toFixed(3));
+      storyScanline?.style.setProperty("--story-scan-x", `${(-18 + progress * 136).toFixed(2)}vw`);
+    }
+
+    if (examsScene && examTrack) {
+      const progress = getSceneProgress(examsScene);
+      const trackTravel = Math.max(0, examTrack.scrollWidth - window.innerWidth);
+      examTrack.style.setProperty("--exam-track-x", `${(-trackTravel * progress).toFixed(1)}px`);
+      examsScene.style.setProperty("--exam-heading-x", `${(-window.innerWidth * 0.055 * progress).toFixed(1)}px`);
+      examsScene.style.setProperty("--exam-heading-kicker-x", `${(window.innerWidth * 0.035 * progress).toFixed(1)}px`);
+      if (examProgress) examProgress.style.transform = `scaleX(${progress})`;
+    }
+  } else {
+    heroScene?.style.setProperty("--hero-content-opacity", "1");
+    heroScene?.style.setProperty("--hero-content-y", "0px");
+    heroScene?.style.setProperty("--hero-line-one-x", "0px");
+    heroScene?.style.setProperty("--hero-line-two-x", "0px");
+    introScene?.style.setProperty("--intro-copy-opacity", "1");
+    introScene?.style.setProperty("--intro-copy-y", "0px");
+    storySteps.forEach((step) => {
+      step.style.setProperty("--step-opacity", "1");
+      step.style.setProperty("--step-y", "0px");
+      step.style.setProperty("--step-clip-top", "0%");
+      step.style.setProperty("--step-clip-bottom", "0%");
+    });
+    examTrack?.style.setProperty("--exam-track-x", "0px");
   }
 };
 
