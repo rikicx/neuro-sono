@@ -1248,7 +1248,8 @@ svg {
 
 .team-hero .subpage-hero-media {
   background-image: url("/assets/team-hero.webp");
-  background-position: center 46%;
+  background-position: 78% 46%;
+  transform-origin: 72% 45%;
 }
 
 .subpage-hero-shade {
@@ -1660,7 +1661,10 @@ svg {
     inset: -3%;
     transform: scale(1.02);
   }
-  .team-hero .subpage-hero-media { background-position: 48% center; }
+  .team-hero .subpage-hero-media {
+    background-position: 84% center;
+    transform-origin: 78% 45%;
+  }
   .subpage-hero-shade {
     background:
       linear-gradient(90deg, rgba(3, 17, 33, 0.76), rgba(3, 17, 33, 0.16)),
