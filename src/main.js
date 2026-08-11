@@ -125,7 +125,7 @@ const updateScrollEffects = () => {
       heroScene.style.setProperty("--hero-line-two-x", `${(window.innerWidth * 0.13 * exit).toFixed(1)}px`);
       heroScene.style.setProperty("--hero-media-scale", (1.04 + progress * 0.2).toFixed(3));
       heroScene.style.setProperty("--hero-media-y", `${(progress * 52).toFixed(1)}px`);
-      heroScene.style.setProperty("--hero-wave-opacity", (0.35 * (1 - smoothstep(0.35, 0.82, progress))).toFixed(3));
+      heroScene.style.setProperty("--hero-wave-opacity", (0.54 * (1 - smoothstep(0.35, 0.82, progress))).toFixed(3));
     }
 
     if (introScene && introSymbol) {
