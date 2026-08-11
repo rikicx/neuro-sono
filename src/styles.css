@@ -338,10 +338,10 @@ svg {
     linear-gradient(90deg, rgba(4, 18, 34, 0.92) 0%, rgba(5, 22, 41, 0.55) 48%, rgba(4, 20, 39, 0.18) 76%, rgba(4, 18, 34, 0.64) 100%),
     linear-gradient(180deg, rgba(5, 16, 30, 0.05) 55%, rgba(5, 16, 30, 0.78) 100%),
     url("/assets/neuro-sono-banner.webp");
-  background-position: center;
+  background-position: 36% center;
   background-size: cover;
   transform: translate3d(0, calc(var(--parallax-y) + var(--hero-media-y)), 0) scale(var(--hero-media-scale));
-  transform-origin: 66% 52%;
+  transform-origin: 40% 52%;
   will-change: transform;
 }
 
@@ -1842,7 +1842,7 @@ svg {
       linear-gradient(90deg, rgba(4, 18, 34, 0.86), rgba(4, 20, 39, 0.36)),
       linear-gradient(180deg, rgba(4, 18, 34, 0.12) 30%, rgba(4, 18, 34, 0.92) 90%),
       url("/assets/neuro-sono-banner.webp");
-    background-position: 45% center;
+    background-position: 30% center;
     transform: scale(1.03);
   }
 
