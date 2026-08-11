@@ -25,12 +25,36 @@ html {
 }
 
 body {
+  --pointer-x: 50vw;
+  --pointer-y: 50vh;
   margin: 0;
   color: var(--ink);
   background: var(--paper);
   font-family: var(--sans);
   font-size: 16px;
   overflow-x: hidden;
+}
+
+body::after {
+  position: fixed;
+  z-index: 55;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(
+    circle 220px at var(--pointer-x) var(--pointer-y),
+    rgba(174, 239, 232, 0.2) 0,
+    rgba(108, 190, 194, 0.1) 38%,
+    transparent 72%
+  );
+  content: "";
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+  will-change: opacity;
+}
+
+body.is-pointer-lit::after {
+  opacity: 1;
 }
 
 body.menu-open {
@@ -2016,6 +2040,7 @@ svg {
   .footer-grid { gap: 42px; }
   .footer-bottom { margin-top: 65px; }
   .whatsapp-float { right: 16px; bottom: 16px; width: 52px; height: 52px; }
+  body::after { display: none; }
 }
 
 @media (max-width: 520px) {
@@ -2034,6 +2059,7 @@ svg {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  body::after { display: none; }
   [data-reveal] { opacity: 1; transform: none; }
   .line-mask > span { transform: none; }
   .hero-media,

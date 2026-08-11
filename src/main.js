@@ -21,6 +21,7 @@ const storyScanline = story?.querySelector(".story-scanline");
 const examsScene = document.querySelector("[data-exams-scene]");
 const examTrack = document.querySelector("[data-exam-track]");
 const examProgress = document.querySelector("[data-exam-progress]");
+const pointerLightQuery = ".hero-stage, .story-sticky, .exam-card-primary, .manifesto, .contact, .subpage-hero, .technical-team";
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const smoothstep = (start, end, value) => {
@@ -57,6 +58,32 @@ menuLinks.forEach((link) => link.addEventListener("click", () => setMenu(false))
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && document.body.classList.contains("menu-open")) setMenu(false);
 });
+
+if (window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reducedMotion.matches) {
+  let pointerLightFrame = 0;
+  let pointerX = 0;
+  let pointerY = 0;
+  let pointerIsLit = false;
+
+  window.addEventListener("pointermove", (event) => {
+    const target = event.target instanceof Element ? event.target.closest(pointerLightQuery) : null;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    pointerIsLit = Boolean(target);
+    if (pointerLightFrame) return;
+
+    pointerLightFrame = window.requestAnimationFrame(() => {
+      document.body.style.setProperty("--pointer-x", `${pointerX}px`);
+      document.body.style.setProperty("--pointer-y", `${pointerY}px`);
+      document.body.classList.toggle("is-pointer-lit", pointerIsLit);
+      pointerLightFrame = 0;
+    });
+  }, { passive: true });
+
+  document.documentElement.addEventListener("mouseleave", () => {
+    document.body.classList.remove("is-pointer-lit");
+  });
+}
 
 if (reducedMotion.matches) {
   revealItems.forEach((item) => item.classList.add("is-visible"));
