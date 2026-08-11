@@ -1345,8 +1345,8 @@ svg {
   display: grid;
   padding: 68px 0 76px;
   border-bottom: 1px solid var(--line);
-  grid-template-columns: minmax(310px, 0.85fr) 1.7fr;
-  gap: 8vw;
+  grid-template-columns: minmax(250px, 0.62fr) 2fr;
+  gap: 5vw;
 }
 
 .team-group > header {
@@ -1376,39 +1376,95 @@ svg {
 
 .people-list {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
 }
 
-.people-list article {
+.person-card {
+  position: relative;
   display: flex;
-  min-height: 92px;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 30px;
-  padding: 18px 0;
-  border-top: 1px solid rgba(8, 29, 52, 0.1);
+  min-width: 0;
+  min-height: 410px;
+  overflow: hidden;
+  flex-direction: column;
+  background: #e2e9ec;
 }
 
-.people-list article:first-child {
-  border-top: 0;
+.person-photo {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 0.82;
+  background: #cbd9df;
+}
+
+.person-photo::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 62%, rgba(3, 17, 33, 0.14));
+  content: "";
+  pointer-events: none;
+}
+
+.person-photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 24%;
+  transform: scale(1.01);
+  transition: transform 900ms var(--ease), filter 900ms var(--ease);
+}
+
+.person-photo--melina img {
+  object-position: 52% center;
+}
+
+.person-card:hover .person-photo img {
+  filter: saturate(1.03) contrast(1.02);
+  transform: scale(1.055);
+}
+
+.person-info {
+  display: flex;
+  min-height: 132px;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 22px 20px 24px;
 }
 
 .people-list h3 {
   margin: 0;
   font-family: var(--display);
-  font-size: clamp(32px, 3.2vw, 50px);
+  font-size: clamp(25px, 2vw, 34px);
   font-weight: 400;
   letter-spacing: -0.025em;
-  line-height: 1;
+  line-height: 1.02;
 }
 
 .people-list p {
-  flex: none;
   margin: 0;
   color: var(--blue);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.1em;
+  line-height: 1.5;
   text-transform: uppercase;
+}
+
+.person-card--text {
+  min-height: 235px;
+  color: white;
+  background:
+    radial-gradient(circle at 112% -8%, transparent 0 28%, rgba(255, 255, 255, 0.1) 28.2% 28.7%, transparent 29%),
+    radial-gradient(circle at 110% -5%, transparent 0 47%, rgba(255, 255, 255, 0.07) 47.2% 47.7%, transparent 48%),
+    var(--deep);
+}
+
+.person-card--text .person-info {
+  min-height: 235px;
+  justify-content: flex-end;
 }
 
 .technical-team {
@@ -1620,9 +1676,12 @@ svg {
   .team-intro-grid > .eyebrow { padding-top: 0; }
   .team-directory { padding: 5px 0 110px; }
   .team-group { grid-template-columns: 1fr; gap: 46px; padding: 50px 0 58px; }
-  .people-list article { min-height: auto; align-items: flex-start; flex-direction: column; gap: 10px; padding: 24px 0; }
-  .people-list h3 { font-size: clamp(34px, 10.5vw, 46px); }
-  .people-list p { flex: auto; }
+  .people-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .person-card { min-height: 0; }
+  .person-info { min-height: 128px; padding: 20px 18px 22px; }
+  .people-list h3 { font-size: clamp(26px, 6vw, 38px); }
+  .people-list p { flex: none; }
+  .person-card--text .person-info { min-height: 220px; }
   .technical-team { padding: 110px 0 120px; }
   .technical-grid { grid-template-columns: 1fr; gap: 72px; }
   .technical-team::before { top: -5%; right: -70%; width: 145vw; }
@@ -1694,6 +1753,14 @@ svg {
   .footer-grid { gap: 42px; }
   .footer-bottom { margin-top: 65px; }
   .whatsapp-float { right: 16px; bottom: 16px; width: 52px; height: 52px; }
+}
+
+@media (max-width: 520px) {
+  .people-list { grid-template-columns: 1fr; }
+  .person-photo { aspect-ratio: 0.92; }
+  .person-info { min-height: 120px; }
+  .people-list h3 { font-size: clamp(32px, 10vw, 44px); }
+  .person-card--text .person-info { min-height: 190px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
