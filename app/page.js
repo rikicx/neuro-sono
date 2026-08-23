@@ -429,7 +429,7 @@ export default function HomePage() {
             <span className="eyebrow">Área do paciente</span>
             <h3>Seus resultados, em um acesso direto.</h3>
           </div>
-          <a className="button button-light" href="/resultados/">
+          <a className="button button-light" href="https://core.feegow.com/patient-interface/185r/login" target="_blank" rel="noreferrer">
             Acessar resultados
             <svg viewBox="0 0 20 20" aria-hidden="true">
               <path d="M5 15 15 5M7 5h8v8" />

@@ -71,6 +71,46 @@ export default function SiteMotion() {
     };
     document.addEventListener("keydown", onKeydown);
 
+    // Anchor links (#sobre, #contato, ...) rely on native scroll-into-view, which gets
+    // interrupted partway when the target sits past deeply nested `position: sticky`
+    // scroll-jacked sections. Drive the scroll manually so it always reaches the target.
+    let scrollAnimationFrame = 0;
+    const smoothScrollTo = (targetY, duration = 900) => {
+      window.cancelAnimationFrame(scrollAnimationFrame);
+      const startY = window.scrollY;
+      const diff = targetY - startY;
+      if (Math.abs(diff) < 1) return;
+      const startTime = performance.now();
+      const step = (now) => {
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        window.scrollTo({ top: startY + diff * eased, behavior: "instant" });
+        if (t < 1) scrollAnimationFrame = window.requestAnimationFrame(step);
+      };
+      scrollAnimationFrame = window.requestAnimationFrame(step);
+    };
+
+    const hashLinks = [...document.querySelectorAll("a[href^='#']")];
+    const hashLinkHandlers = hashLinks.map((link) => {
+      const handler = (event) => {
+        const hash = link.getAttribute("href");
+        const id = hash.slice(1);
+        const target = id ? document.getElementById(id) : null;
+        if (!target) return;
+        event.preventDefault();
+        const targetY = target.getBoundingClientRect().top + window.scrollY;
+        if (reducedMotion.matches) {
+          window.scrollTo({ top: targetY, behavior: "instant" });
+        } else {
+          smoothScrollTo(targetY);
+        }
+        window.history.pushState(null, "", hash);
+      };
+      link.addEventListener("click", handler);
+      return { link, handler };
+    });
+
     const servicesTrack = document.querySelector("[data-services-track]");
     const servicesPrev = document.querySelector("[data-services-prev]");
     const servicesNext = document.querySelector("[data-services-next]");
@@ -289,6 +329,8 @@ export default function SiteMotion() {
       menuButton.removeEventListener("click", onMenuButtonClick);
       menuLinkHandlers.forEach(({ link, handler }) => link.removeEventListener("click", handler));
       document.removeEventListener("keydown", onKeydown);
+      hashLinkHandlers.forEach(({ link, handler }) => link.removeEventListener("click", handler));
+      window.cancelAnimationFrame(scrollAnimationFrame);
       cleanupServices();
       cleanupPointerLight();
       revealObserver?.disconnect();

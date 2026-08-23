@@ -42,6 +42,7 @@
 html {
   scroll-behavior: smooth;
   background: var(--deep);
+  overflow-x: hidden;
 }
 
 body {
@@ -52,7 +53,6 @@ body {
   background: var(--paper);
   font-family: var(--sans);
   font-size: 16px;
-  overflow-x: hidden;
 }
 
 body::after {
@@ -2532,37 +2532,6 @@ svg {
   height: auto;
 }
 
-/* Resultados de exames (login embutido) */
-.results-page {
-  width: min(680px, 100%);
-  margin: 0 auto;
-}
-
-.results-frame-wrap {
-  overflow: hidden;
-  margin-top: 40px;
-  border: 1px solid var(--line);
-  background: var(--white);
-}
-
-.results-frame {
-  display: block;
-  width: 100%;
-  height: 640px;
-  border: 0;
-}
-
-.results-fallback {
-  margin: 20px 0 0;
-  color: rgba(11, 29, 53, 0.55);
-  font-size: 13px;
-  text-align: center;
-}
-
-.results-fallback a {
-  color: var(--blue);
-}
-
 /* Índice de Conteúdos */
 .content-index {
   padding: 168px 0 140px;
@@ -3238,7 +3207,6 @@ body.procedure-open {
   .content-search { flex-basis: 100%; }
   .content-grid { grid-template-columns: 1fr 1fr; gap: 32px 20px; }
 
-  .results-frame { height: 560px; }
   .procedure-sheet-body { width: calc(100% - 48px); padding: 96px 0 72px; }
   .procedure-close { top: 16px; right: 16px; width: 44px; height: 44px; }
 }

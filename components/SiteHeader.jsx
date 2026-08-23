@@ -1,4 +1,4 @@
-export default function SiteHeader({ brandHref, examLinkCurrent = false, onLightPage = false }) {
+export default function SiteHeader({ brandHref, onLightPage = false }) {
   return (
     <header className={`site-header${onLightPage ? " on-light-page" : ""}`} data-header>
       <a className="brand" href={brandHref} aria-label="Neuro-Sono — início">
@@ -6,7 +6,7 @@ export default function SiteHeader({ brandHref, examLinkCurrent = false, onLight
       </a>
 
       <div className="header-actions">
-        <a className="exam-link" href="/resultados/" aria-current={examLinkCurrent ? "page" : undefined}>
+        <a className="exam-link" href="https://core.feegow.com/patient-interface/185r/login" target="_blank" rel="noreferrer">
           Resultados de exames
           <svg viewBox="0 0 20 20" aria-hidden="true">
             <path d="M5 15 15 5M7 5h8v8" />

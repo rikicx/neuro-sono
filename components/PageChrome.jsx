@@ -14,7 +14,7 @@ export default function PageChrome({ variant = "subpage", currentHref, pageLabel
         Ir para o conteúdo
       </a>
 
-      <SiteHeader brandHref={brandHref} examLinkCurrent={currentHref === "/resultados/"} onLightPage={headerOnLight} />
+      <SiteHeader brandHref={brandHref} onLightPage={headerOnLight} />
       <MenuNav items={items} currentHref={currentHref} />
 
       <main id="conteudo">{children}</main>
