@@ -1741,7 +1741,7 @@ svg {
   height: 56px;
   place-items: center;
   color: white;
-  background: #25d366;
+  background: var(--blue);
   border-radius: 50%;
   box-shadow: 0 12px 34px rgba(5, 25, 40, 0.26);
   transition: transform 300ms var(--ease), box-shadow 300ms var(--ease);
@@ -1789,11 +1789,6 @@ svg {
   background-image: url("/assets/team-hero.webp");
   background-position: 78% 46%;
   transform-origin: 72% 45%;
-}
-
-.structure-hero .subpage-hero-media {
-  background-image: url("/assets/structure/entrada.webp");
-  background-position: 50% 62%;
 }
 
 .subpage-hero-shade {
@@ -2160,45 +2155,76 @@ svg {
 .hero-rings i { top: 42%; left: -10%; width: 36vw; aspect-ratio: 1; opacity: 0.5; }
 
 /* Tour imersivo (reaproveita a mecânica de .story com um tom visual próprio) */
-.story.tour-story { background: var(--night); }
-.story.tour-story .story-orbit span { border-color: rgba(219, 231, 239, 0.16); }
-.story.tour-story .story-kicker { color: #c7dbe3; }
+/* Estrutura: Hero fundido com o passeio pela clínica — fundo de foto trocando por etapa */
+.story.structure-story { height: 460vh; background: var(--night); }
+.structure-story .story-kicker { color: #c7dbe3; }
 
-.tour-photos {
+.structure-story-media {
   position: absolute;
   z-index: 0;
-  top: 50%;
-  right: 6%;
-  width: min(30vw, 420px);
-  aspect-ratio: 1;
-  transform: translateY(-50%);
+  inset: 0;
 }
 
-.tour-photo {
+.structure-story-photo {
   position: absolute;
   inset: 0;
-  overflow: hidden;
-  border-radius: 18% 22% 20% 24%;
   opacity: 0;
-  box-shadow: 0 30px 80px rgba(4, 12, 24, 0.45);
-  transition: opacity 900ms var(--ease);
+  transition: opacity 1100ms var(--ease);
 }
 
-.tour-photo.is-active {
+.structure-story-photo.is-active {
   opacity: 1;
 }
 
-.tour-photo img {
+.structure-story-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.tour-photo::after {
+.structure-story-shade {
   position: absolute;
+  z-index: 1;
   inset: 0;
-  content: "";
-  background: linear-gradient(200deg, rgba(7, 25, 47, 0) 45%, rgba(7, 25, 47, 0.6) 100%);
+  background:
+    linear-gradient(90deg, rgba(3, 17, 33, 0.93) 0%, rgba(3, 17, 33, 0.7) 38%, rgba(3, 17, 33, 0.64) 100%),
+    linear-gradient(180deg, rgba(3, 17, 33, 0.14) 30%, rgba(3, 17, 33, 0.5) 100%);
+}
+
+.structure-story .story-orbit,
+.structure-story .story-layout,
+.structure-story .story-progress {
+  z-index: 2;
+}
+
+.story-step.is-hero-step .eyebrow {
+  margin: 0 0 20px;
+  color: var(--accent);
+}
+
+.story-step.is-hero-step h1 {
+  margin: 0;
+  max-width: 15ch;
+  font-family: var(--display);
+  font-size: clamp(46px, 5.6vw, 88px);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.94;
+  text-wrap: balance;
+}
+
+.story-step.is-hero-step h1 .italic {
+  color: var(--mist);
+  font-style: italic;
+}
+
+.story-step.is-hero-step p {
+  margin: 22px 0 0;
+  max-width: 46ch;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 
 /* Grade de ambientes com espaços reservados para fotografia real */
@@ -3130,7 +3156,8 @@ body.procedure-open {
   .team-group { grid-template-columns: 1fr; gap: 46px; padding: 50px 0 58px; }
   .people-list,
   .room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .tour-photos { display: none; }
+  .structure-story-media { display: none; }
+  .story-step.is-hero-step h1 { max-width: none; }
   .person-card { min-height: 0; }
   .person-info { min-height: 128px; padding: 20px 18px 22px; }
   .people-list h3 { font-size: clamp(26px, 6vw, 38px); }

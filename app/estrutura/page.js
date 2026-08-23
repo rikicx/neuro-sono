@@ -12,27 +12,74 @@ export const metadata = {
 export default function EstruturaPage() {
   return (
     <PageChrome variant="subpage" currentHref="/estrutura/" pageLabel="Estrutura">
-      <section className="subpage-hero structure-hero" aria-labelledby="page-title">
-        <div className="subpage-hero-media" data-scroll-zoom aria-hidden="true"></div>
-        <div className="subpage-hero-shade" aria-hidden="true"></div>
-        <div className="shell subpage-hero-content">
-          <p className="eyebrow" data-reveal>
-            Nossa estrutura
-          </p>
-          <h1 id="page-title">
-            <span className="line-mask">
-              <span>Um ambiente pensado</span>
-            </span>
-            <span className="line-mask">
-              <span className="italic">para o seu sono real.</span>
-            </span>
-          </h1>
-          <div className="subpage-hero-bottom" data-reveal>
-            <p>
-              Quartos exclusivos para polissonografia e consultórios equipados, planejados para oferecer conforto,
-              privacidade e segurança durante toda a sua experiência.
-            </p>
-            <span className="page-marker">01 · Estrutura</span>
+      <section className="story structure-story" aria-labelledby="page-title" data-story>
+        <div className="story-sticky">
+          <div className="structure-story-media" aria-hidden="true">
+            <div className="structure-story-photo is-active" data-story-photo="0">
+              <img src="/assets/structure/entrada.webp" alt="" loading="eager" decoding="async" />
+            </div>
+            <div className="structure-story-photo" data-story-photo="1">
+              <img src="/assets/structure/entrada.webp" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div className="structure-story-photo" data-story-photo="2">
+              <img src="/assets/structure/quarto-polissonografia-cpap.webp" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div className="structure-story-photo" data-story-photo="3">
+              <img src="/assets/structure/atendimento-eeg-paciente.webp" alt="" loading="lazy" decoding="async" />
+            </div>
+          </div>
+          <div className="structure-story-shade" aria-hidden="true"></div>
+          <div className="story-orbit" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <div className="shell story-layout">
+            <div className="story-aside">
+              <p className="eyebrow">Conheça a clínica</p>
+              <div className="story-counter">
+                <span data-story-current>01</span>
+                <i></i>
+                <span>04</span>
+              </div>
+            </div>
+            <div className="story-steps">
+              <article className="story-step is-hero-step is-active" data-story-step="0">
+                <p className="eyebrow">Nossa estrutura</p>
+                <h1 id="page-title">
+                  <span>Um ambiente pensado</span> <span className="italic">para o seu sono real.</span>
+                </h1>
+                <p>
+                  Quartos exclusivos para polissonografia e consultórios equipados, planejados para oferecer conforto,
+                  privacidade e segurança durante toda a sua experiência.
+                </p>
+              </article>
+              <article className="story-step" data-story-step="1">
+                <span className="story-ghost" aria-hidden="true">
+                  Chegada
+                </span>
+                <span className="story-kicker">Chegada</span>
+                <h3>Uma recepção pensada para acolher, sem pressa e sem burocracia.</h3>
+              </article>
+              <article className="story-step" data-story-step="2">
+                <span className="story-ghost" aria-hidden="true">
+                  Sono
+                </span>
+                <span className="story-kicker">Quarto de exame</span>
+                <h3>Quartos exclusivos para polissonografia, com cama confortável e banheiro privativo.</h3>
+              </article>
+              <article className="story-step" data-story-step="3">
+                <span className="story-ghost" aria-hidden="true">
+                  Cuidado
+                </span>
+                <span className="story-kicker">Consultório</span>
+                <h3>Consultórios equipados para consulta e acompanhamento, com atendimento humanizado do início ao fim.</h3>
+              </article>
+            </div>
+          </div>
+          <div className="story-progress" aria-hidden="true">
+            <span data-story-progress></span>
           </div>
         </div>
       </section>
@@ -46,64 +93,6 @@ export default function EstruturaPage() {
             Cama confortável, banheiro privativo e temperatura controlada — para reproduzir uma noite de sono o mais
             parecida possível com a de casa.
           </h2>
-        </div>
-      </section>
-
-      <section className="story tour-story" aria-label="Um passeio pela clínica" data-story>
-        <div className="story-sticky">
-          <div className="story-scanline" aria-hidden="true"></div>
-          <div className="story-orbit" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <div className="tour-photos" aria-hidden="true">
-            <div className="tour-photo is-active" data-story-photo="0">
-              <img src="/assets/structure/entrada.webp" alt="" loading="lazy" decoding="async" />
-            </div>
-            <div className="tour-photo" data-story-photo="1">
-              <img src="/assets/structure/quarto-polissonografia-cpap.webp" alt="" loading="lazy" decoding="async" />
-            </div>
-            <div className="tour-photo" data-story-photo="2">
-              <img src="/assets/structure/atendimento-eeg-paciente.webp" alt="" loading="lazy" decoding="async" />
-            </div>
-          </div>
-          <div className="shell story-layout">
-            <div className="story-aside">
-              <p className="eyebrow">Um passeio pela clínica</p>
-              <div className="story-counter">
-                <span data-story-current>01</span>
-                <i></i>
-                <span>03</span>
-              </div>
-            </div>
-            <div className="story-steps">
-              <article className="story-step is-active" data-story-step="0">
-                <span className="story-ghost" aria-hidden="true">
-                  Chegada
-                </span>
-                <span className="story-kicker">Chegada</span>
-                <h3>Uma recepção pensada para acolher, sem pressa e sem burocracia.</h3>
-              </article>
-              <article className="story-step" data-story-step="1">
-                <span className="story-ghost" aria-hidden="true">
-                  Sono
-                </span>
-                <span className="story-kicker">Quarto de exame</span>
-                <h3>Quartos exclusivos para polissonografia, com cama confortável e banheiro privativo.</h3>
-              </article>
-              <article className="story-step" data-story-step="2">
-                <span className="story-ghost" aria-hidden="true">
-                  Cuidado
-                </span>
-                <span className="story-kicker">Consultório</span>
-                <h3>Consultórios equipados para consulta e acompanhamento, com atendimento humanizado do início ao fim.</h3>
-              </article>
-            </div>
-          </div>
-          <div className="story-progress" aria-hidden="true">
-            <span data-story-progress></span>
-          </div>
         </div>
       </section>
 
