@@ -1,6 +1,6 @@
-export default function SiteHeader({ brandHref, examLinkCurrent = false }) {
+export default function SiteHeader({ brandHref, examLinkCurrent = false, onLightPage = false }) {
   return (
-    <header className="site-header" data-header>
+    <header className={`site-header${onLightPage ? " on-light-page" : ""}`} data-header>
       <a className="brand" href={brandHref} aria-label="Neuro-Sono — início">
         <img src="/assets/neuro-sono-logo.png" alt="Neuro-Sono" />
       </a>

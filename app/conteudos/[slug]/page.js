@@ -71,7 +71,7 @@ export default async function ArticlePage({ params }) {
   const bodyBlocks = post.blocks.filter((b) => !(b.type === "image" && b.local === post.hero_local));
 
   return (
-    <PageChrome variant="subpage" currentHref="/conteudos/" pageLabel="Conteúdos">
+    <PageChrome variant="subpage" currentHref="/conteudos/" pageLabel="Conteúdos" headerOnLight>
       <section className="procedure-page-section section-light">
         <div className="shell">
           <article className="procedure-page article-page">

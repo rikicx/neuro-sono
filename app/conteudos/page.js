@@ -41,7 +41,7 @@ export default function ConteudosPage() {
   const featuredExcerpt = excerptFor(featured, 150);
 
   return (
-    <PageChrome variant="subpage" currentHref="/conteudos/" pageLabel="Conteúdos">
+    <PageChrome variant="subpage" currentHref="/conteudos/" pageLabel="Conteúdos" headerOnLight>
       <section className="content-index section-light">
         <div className="shell">
           <div className="content-index-heading">

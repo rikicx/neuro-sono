@@ -4,7 +4,7 @@ import SiteFooter from "./SiteFooter";
 import WhatsappFloat from "./WhatsappFloat";
 import { SUBPAGE_NAV, HOME_NAV } from "./nav-config";
 
-export default function PageChrome({ variant = "subpage", currentHref, pageLabel, children }) {
+export default function PageChrome({ variant = "subpage", currentHref, pageLabel, headerOnLight = false, children }) {
   const items = variant === "home" ? HOME_NAV : SUBPAGE_NAV;
   const brandHref = variant === "home" ? "#inicio" : "/";
 
@@ -14,7 +14,7 @@ export default function PageChrome({ variant = "subpage", currentHref, pageLabel
         Ir para o conteúdo
       </a>
 
-      <SiteHeader brandHref={brandHref} examLinkCurrent={currentHref === "/resultados/"} />
+      <SiteHeader brandHref={brandHref} examLinkCurrent={currentHref === "/resultados/"} onLightPage={headerOnLight} />
       <MenuNav items={items} currentHref={currentHref} />
 
       <main id="conteudo">{children}</main>

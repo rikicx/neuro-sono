@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function ResultadosPage() {
   return (
-    <PageChrome variant="subpage" currentHref="/resultados/" pageLabel="Resultados de exames">
+    <PageChrome variant="subpage" currentHref="/resultados/" pageLabel="Resultados de exames" headerOnLight>
       <section className="procedure-page-section results-page-section section-light">
         <div className="shell">
           <div className="procedure-page results-page">

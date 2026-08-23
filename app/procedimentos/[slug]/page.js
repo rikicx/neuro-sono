@@ -26,7 +26,7 @@ export default async function ProcedurePage({ params }) {
   if (!proc) notFound();
 
   return (
-    <PageChrome variant="subpage" currentHref={`/procedimentos/${slug}/`} pageLabel="Procedimentos">
+    <PageChrome variant="subpage" currentHref={`/procedimentos/${slug}/`} pageLabel="Procedimentos" headerOnLight>
       <section className="procedure-page-section section-light">
         <div className="shell">
           <article className="procedure-page" data-procedure-content>

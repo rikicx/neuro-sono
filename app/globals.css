@@ -193,7 +193,8 @@ svg {
   border-bottom: 1px solid transparent;
 }
 
-.site-header.is-scrolled {
+.site-header.is-scrolled,
+.site-header.on-light-page {
   height: 76px;
   border-color: rgba(255, 255, 255, 0.14);
   background: rgba(6, 19, 37, 0.78);
