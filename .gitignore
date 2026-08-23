@@ -1,9 +1,12 @@
 node_modules/
 dist/
+.next/
 .DS_Store
 
 # Arquivos internos do ambiente de trabalho
 AGENTS.md
+CLAUDE.md
 sources/
 .agents/
 .codex/
+.claude/

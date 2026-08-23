@@ -1,0 +1,266 @@
+[
+  {
+    "slug": "polissonografia",
+    "eyebrow": "Estudo do sono",
+    "title": "Polissonografia",
+    "lead": "O exame mais completo para investigar o que acontece com você enquanto dorme.",
+    "sections": [
+      {
+        "h2": "Como funciona",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Durante o período principal do seu sono, registramos a atividade elétrica cerebral, a respiração, a contração de músculos específicos, o movimento dos olhos, os batimentos cardíacos, o ronco e a taxa de oxigênio no sangue — e, quando necessário, outras variáveis como o gás carbônico. Apesar da quantidade de sensores, o exame é bem tolerado: não há agulhas nem qualquer procedimento invasivo."
+          }
+        ]
+      },
+      {
+        "h2": "Modalidades",
+        "blocks": [
+          {
+            "type": "ul",
+            "items": [
+              "<strong>Basal.</strong> Para diagnóstico geral dos distúrbios do sono.",
+              "<strong>Domiciliar.</strong> Um técnico monta o equipamento na sua casa e retorna no dia seguinte para retirá-lo. É especialmente confiável quando a suspeita principal é apneia do sono.",
+              "<strong>Titulação de CPAP, BiPAP ou Servo-Ventilador.</strong> Feita depois que o tratamento já foi indicado, para encontrar a pressão exata que elimina apneias, roncos e despertares.",
+              "<strong>Pediátrica.</strong> Voltada para o diagnóstico de distúrbios do sono em crianças.",
+              "<strong>Neurológica.</strong> Quando é preciso registrar a atividade de várias regiões do cérebro, com eletrodos por toda a cabeça."
+            ]
+          }
+        ]
+      },
+      {
+        "h2": "O que esperar",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Se o exame for no laboratório, você passa a noite em um quarto preparado para isso, com cama confortável e banheiro privativo. Se for domiciliar, o próprio técnico leva o equipamento até você. O horário respeita o seu padrão de sono: quem dorme e acorda mais tarde, por exemplo, faz um exame estendido para acompanhar esse ritmo."
+          }
+        ]
+      }
+    ],
+    "ctaText": "Tem uma indicação de polissonografia e quer entender o que vem pela frente?",
+    "ctaHref": "https://wa.me/5511940397143?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Polissonografia.",
+    "metaDescription": "Como funciona a polissonografia, suas modalidades (basal, domiciliar, titulação de CPAP/BiPAP/Servo-Ventilador, pediátrica e neurológica) e o que esperar do exame na Clínica Neuro-Sono.",
+    "metaTitle": "Polissonografia — Neuro-Sono"
+  },
+  {
+    "slug": "eletroencefalograma",
+    "eyebrow": "Avaliação neurológica",
+    "title": "Eletroencefalograma (EEG)",
+    "lead": "Um retrato da atividade elétrica do seu cérebro, sem nenhuma agulha.",
+    "sections": [
+      {
+        "h2": "Como funciona",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "É o registro gráfico da atividade elétrica cerebral na superfície da cabeça, por no mínimo 20 minutos. Método não invasivo, usado para verificar o padrão normal da atividade do cérebro, identificar alterações ligadas a epilepsias, avaliar o nível de sedação em UTI ou centro cirúrgico, e até no diagnóstico de morte cerebral."
+          }
+        ]
+      },
+      {
+        "h2": "Modalidades",
+        "blocks": [
+          {
+            "type": "ul",
+            "items": [
+              "<strong>EEG em UTI.</strong> Para pacientes com rebaixamento de consciência, ajudando a identificar crises epilépticas que dificultam a recuperação.",
+              "<strong>EEG Prolongado (12 ou 24 horas).</strong> Indicado quando o exame de rotina não é suficiente para esclarecer crises ou alterações raras.",
+              "<strong>Vídeo-EEG.</strong> Realizado com monitorização por vídeo e áudio, o que facilita entender o início de uma crise e orientar o tratamento.",
+              "<strong>Poligrafia Neonatal.</strong> Registra a atividade cerebral do recém-nascido junto com respiração, oxigenação e movimento dos olhos.",
+              "<strong>Mapeamento Elétrico Cerebral (EEG Quantitativo).</strong> Analisa os ritmos cerebrais de forma comparativa, complementando a leitura visual do EEG; útil em avaliações de memória e quadros como Alzheimer.",
+              "<strong>EEG Domiciliar.</strong> Realizado no conforto da sua casa, com a mesma qualidade técnica."
+            ]
+          }
+        ]
+      },
+      {
+        "h2": "O que esperar",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Eletrodos são colados no couro cabeludo — sem furos, sem dor — e o registro é contínuo pelo tempo indicado pelo médico. Não há preparo especial além do que a equipe orientar antes do exame."
+          }
+        ]
+      }
+    ],
+    "ctaText": "Foi indicado um EEG e você quer entender como vai funcionar?",
+    "ctaHref": "https://wa.me/5511940397143?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20o%20Eletroencefalograma%20(EEG).",
+    "metaDescription": "Como funciona o eletroencefalograma (EEG) e suas variantes — UTI, prolongado, vídeo-EEG, domiciliar e mapeamento cerebral — na Clínica Neuro-Sono.",
+    "metaTitle": "Eletroencefalograma (EEG) — Neuro-Sono"
+  },
+  {
+    "slug": "tcc-insonia",
+    "eyebrow": "Tratamento da insônia",
+    "title": "Terapia Cognitivo-Comportamental para Insônia",
+    "lead": "Insônia crônica raramente se resolve só com remédio, e a ciência já sabe por quê.",
+    "sections": [
+      {
+        "h2": "Como funciona",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "A insônia é a percepção quantitativa ou qualitativa de falta de sono. A Terapia Cognitivo-Comportamental para Insônia (TCCi) é amplamente usada no tratamento dos distúrbios do sono, especialmente da insônia crônica, associada ou não a outras condições. A técnica busca promover transformações no pensamento e nas crenças do paciente sobre o sono, com o objetivo de gerar mudanças emocionais e comportamentais duradouras. Foi descrita pela primeira vez pelo terapeuta Richard Bootzin, em 1977."
+          }
+        ]
+      },
+      {
+        "h2": "O que esperar",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Sessões guiadas por um profissional especializado, com estratégias práticas — não apenas conversas — para mudar a relação entre você e a hora de dormir. Diferente de um remédio, o efeito da TCCi tende a se manter mesmo depois que a terapia termina."
+          }
+        ]
+      }
+    ],
+    "ctaText": "Quer entender se a TCCi é indicada para o seu caso?",
+    "ctaHref": "https://wa.me/5511940397143?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Terapia%20Cognitivo-Comportamental%20para%20Ins%C3%B4nia.",
+    "metaDescription": "O que é a Terapia Cognitivo-Comportamental para Insônia (TCCi) e como ela trata a insônia crônica na Clínica Neuro-Sono.",
+    "metaTitle": "TCC para Insônia — Neuro-Sono"
+  },
+  {
+    "slug": "cpap-bipap-servo-ventilador",
+    "eyebrow": "Tratamento da apneia",
+    "title": "Adaptação de CPAP, BiPAP e Servo-Ventilador",
+    "lead": "O aparelho certo só funciona se for bem ajustado a você. É isso que essa etapa garante.",
+    "sections": [
+      {
+        "h2": "Como funciona",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "O tratamento dos distúrbios respiratórios do sono exige profissionais com treinamento específico. Raramente as características de um equipamento, sozinhas, garantem sucesso no tratamento da Apneia Obstrutiva do Sono — o objetivo é que você use o aparelho todas as noites, a noite toda, e é o acompanhamento da equipe que torna isso possível."
+          }
+        ]
+      },
+      {
+        "h2": "O passo a passo",
+        "blocks": [
+          {
+            "type": "ul",
+            "items": [
+              "<strong>Dessensibilização.</strong> Um fisioterapeuta apresenta o aparelho, explica seu funcionamento e ajuda você a escolher, entre várias máscaras, a mais confortável. Para a maioria dos pacientes, é o primeiro contato com o CPAP.",
+              "<strong>Polissonografia de titulação.</strong> Depois da dessensibilização e da escolha da máscara, um exame de sono encontra a pressão exata que elimina apneias, roncos e despertares."
+            ]
+          }
+        ]
+      },
+      {
+        "h2": "Os três equipamentos",
+        "blocks": [
+          {
+            "type": "ul",
+            "items": [
+              "<strong>CPAP.</strong> O mais comum, referência documentada para reduzir riscos como infarto e AVC.",
+              "<strong>BiPAP.</strong> Indicado quando a pressão do CPAP fica desconfortável, usando um valor na inspiração e outro, menor, na expiração.",
+              "<strong>Servo-Ventilador.</strong> Indicado para casos clínicos mais específicos, quando o cérebro falha em comandar corretamente a respiração durante o sono."
+            ]
+          }
+        ]
+      }
+    ],
+    "ctaText": "Já tem um CPAP, BiPAP ou Servo-Ventilador indicado e quer saber os próximos passos?",
+    "ctaHref": "https://wa.me/5511940397143?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20CPAP%2C%20BiPAP%20e%20Servo-Ventilador.",
+    "metaDescription": "Como funciona a adaptação de CPAP, BiPAP e Servo-Ventilador para tratamento da apneia do sono na Clínica Neuro-Sono, da dessensibilização à titulação.",
+    "metaTitle": "CPAP, BiPAP e Servo-Ventilador — Neuro-Sono"
+  },
+  {
+    "slug": "eletroneuromiografia",
+    "eyebrow": "Nervos e músculos",
+    "title": "Eletroneuromiografia",
+    "lead": "Quando um formigamento, uma dor ou uma fraqueza precisam de uma explicação precisa.",
+    "sections": [
+      {
+        "h2": "Como funciona",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "É um exame útil para confirmação diagnóstica e acompanhamento de pacientes com condições como esclerose lateral amiotrófica, paralisias faciais, neuropatia diabética e outras polineuropatias, síndrome do túnel do carpo, hérnia de disco ou outras radiculopatias que causam lesões nos nervos da coluna, entre outras condições clínicas."
+          }
+        ]
+      },
+      {
+        "h2": "O que esperar",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Avaliação da condução elétrica em nervos e músculos, conduzida por profissional especializado. O resultado ajuda o médico a confirmar — ou descartar — hipóteses diagnósticas, e a acompanhar a evolução do quadro ao longo do tempo."
+          }
+        ]
+      }
+    ],
+    "ctaText": "Tem uma indicação de eletroneuromiografia e quer entender o que esperar?",
+    "ctaHref": "https://wa.me/5511940397143?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Eletroneuromiografia.",
+    "metaDescription": "O que é a eletroneuromiografia e para quais condições de nervos e músculos ela é usada, na Clínica Neuro-Sono.",
+    "metaTitle": "Eletroneuromiografia — Neuro-Sono"
+  },
+  {
+    "slug": "avaliacao-neuropsicologica",
+    "eyebrow": "Funções cognitivas",
+    "title": "Avaliação Neuropsicológica",
+    "lead": "Memória, atenção e raciocínio também podem, e devem, ser medidos com precisão.",
+    "sections": [
+      {
+        "h2": "Como funciona",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Tem como objetivo estudar as funções cognitivas — memória, atenção, planejamento, cálculo, entre outras — e sensório-motoras do paciente, por meio de baterias de testes psicométricos e neuropsicológicos. A Neuro-Sono utiliza a Bateria Neuropsicológica Luria-Nebraska para comparar o desempenho obtido com o que é esperado para a faixa etária, escolaridade e nível socioeconômico de cada paciente."
+          }
+        ]
+      },
+      {
+        "h2": "O que esperar",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Uma série de testes padronizados, aplicados por profissional especializado. O resultado ajuda a identificar se há, ou não, um nível de comprometimento cognitivo relevante — informação importante tanto para o diagnóstico quanto para o acompanhamento ao longo do tempo."
+          }
+        ]
+      }
+    ],
+    "ctaText": "Quer entender se a avaliação neuropsicológica faz sentido para o seu caso?",
+    "ctaHref": "https://wa.me/5511940397143?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Avalia%C3%A7%C3%A3o%20Neuropsicol%C3%B3gica.",
+    "metaDescription": "O que é a Avaliação Neuropsicológica, a Bateria Luria-Nebraska e como ela ajuda a identificar alterações cognitivas na Clínica Neuro-Sono.",
+    "metaTitle": "Avaliação Neuropsicológica — Neuro-Sono"
+  },
+  {
+    "slug": "sonolencia-diurna",
+    "eyebrow": "Sonolência excessiva",
+    "title": "Testes de Sonolência Diurna",
+    "lead": "Duas perguntas diferentes sobre o mesmo problema: você dorme rápido demais, ou não consegue ficar acordado?",
+    "sections": [
+      {
+        "h2": "Como funciona",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Reúne dois exames complementares, realizados durante o dia em continuidade a uma polissonografia noturna."
+          },
+          {
+            "type": "ul",
+            "items": [
+              "<strong>Múltiplos Testes de Latência do Sono (MTLS).</strong> Exame de fundamental importância no diagnóstico objetivo da sonolência diurna excessiva. Entre as causas que ajuda a identificar está a Narcolepsia — doença rara que, em um de seus tipos, é diagnosticada justamente por esse exame.",
+              "<strong>Teste de Manutenção da Vigília.</strong> Mede a capacidade de permanecer acordado. Em alguns lugares, é usado até para avaliar se alguém com problemas de sono está apto a dirigir: o paciente é monitorado por EEG, sentado, em ambiente monótono, ao longo de 4 ou 5 tentativas com intervalo de 2 horas entre elas."
+            ]
+          }
+        ]
+      },
+      {
+        "h2": "O que esperar",
+        "blocks": [
+          {
+            "type": "p",
+            "html": "Ambos são feitos no laboratório de sono, sob monitorização da equipe, na sequência de uma noite de polissonografia."
+          }
+        ]
+      }
+    ],
+    "ctaText": "Sente sonolência excessiva durante o dia e quer investigar a causa?",
+    "ctaHref": "https://wa.me/5511940397143?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20os%20Testes%20de%20Sonol%C3%AAncia%20Diurna.",
+    "metaDescription": "Múltiplos Testes de Latência do Sono e Teste de Manutenção da Vigília: como funcionam os testes de sonolência diurna na Clínica Neuro-Sono.",
+    "metaTitle": "Testes de Sonolência Diurna — Neuro-Sono"
+  }
+]
