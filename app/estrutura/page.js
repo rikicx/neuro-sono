@@ -57,10 +57,16 @@ export default function EstruturaPage() {
             <span></span>
             <span></span>
           </div>
-          <div className="tour-scene" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
+          <div className="tour-photos" aria-hidden="true">
+            <div className="tour-photo is-active" data-story-photo="0">
+              <img src="/assets/structure/entrada.webp" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div className="tour-photo" data-story-photo="1">
+              <img src="/assets/structure/quarto-polissonografia-cpap.webp" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div className="tour-photo" data-story-photo="2">
+              <img src="/assets/structure/atendimento-eeg-paciente.webp" alt="" loading="lazy" decoding="async" />
+            </div>
           </div>
           <div className="shell story-layout">
             <div className="story-aside">
@@ -119,8 +125,8 @@ export default function EstruturaPage() {
             <article className="room-card">
               <div className="room-photo-slot">
                 <img
-                  src="/assets/structure/quarto.webp"
-                  alt="Quarto exclusivo para polissonografia da Clínica Neuro-Sono"
+                  src="/assets/structure/quarto-polissonografia-cpap.webp"
+                  alt="Quarto exclusivo para polissonografia da Clínica Neuro-Sono, com equipamento de CPAP"
                   loading="lazy"
                   decoding="async"
                 />
@@ -131,12 +137,45 @@ export default function EstruturaPage() {
               </div>
             </article>
             <article className="room-card">
-              <div className="room-photo-slot" aria-hidden="true">
-                <span>Fotografia em produção</span>
+              <div className="room-photo-slot">
+                <img
+                  src="/assets/structure/atendimento-eeg-paciente.webp"
+                  alt="Médica e paciente durante exame de eletroencefalograma na Clínica Neuro-Sono"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
               <div className="room-info">
                 <h3>Consultório</h3>
                 <p>Espaço equipado para consultas e acompanhamento com a equipe especializada.</p>
+              </div>
+            </article>
+            <article className="room-card">
+              <div className="room-photo-slot">
+                <img
+                  src="/assets/structure/eeg-pediatrico-atendimento.webp"
+                  alt="Atendimento pediátrico durante exame de eletroencefalograma na Clínica Neuro-Sono"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div className="room-info">
+                <h3>Atendimento infantil</h3>
+                <p>Exames adaptados para crianças, com acompanhamento dos pais durante todo o procedimento.</p>
+              </div>
+            </article>
+            <article className="room-card">
+              <div className="room-photo-slot">
+                <img
+                  src="/assets/structure/amenidades-cafe-da-manha.webp"
+                  alt="Kit de amenidades e café da manhã oferecidos durante a internação na Clínica Neuro-Sono"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div className="room-info">
+                <h3>Conforto e amenidades</h3>
+                <p>Kit de higiene, toalhas e café da manhã incluídos, para sua estadia ser a mais próxima possível de casa.</p>
               </div>
             </article>
           </div>

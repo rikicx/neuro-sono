@@ -33,6 +33,7 @@ export default function SiteMotion() {
     const scrollZoomItems = [...document.querySelectorAll("[data-scroll-zoom]")];
     const story = document.querySelector("[data-story]");
     const storySteps = [...document.querySelectorAll("[data-story-step]")];
+    const storyPhotos = [...document.querySelectorAll("[data-story-photo]")];
     const storyCurrent = document.querySelector("[data-story-current]");
     const storyProgress = document.querySelector("[data-story-progress]");
     const heroScene = document.querySelector("[data-hero-scene]");
@@ -270,6 +271,10 @@ export default function SiteMotion() {
             step.style.setProperty("--step-clip-top", `${((1 - entry) * 48).toFixed(2)}%`);
             step.style.setProperty("--step-clip-bottom", `${((1 - exit) * 48).toFixed(2)}%`);
             step.classList.toggle("is-active", index === active);
+          });
+
+          storyPhotos.forEach((photo) => {
+            photo.classList.toggle("is-active", Number(photo.dataset.storyPhoto) === active);
           });
 
           if (storyCurrent) storyCurrent.textContent = String(active + 1).padStart(2, "0");
