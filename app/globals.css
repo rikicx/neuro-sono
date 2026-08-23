@@ -737,6 +737,13 @@ svg {
   min-height: 1500px;
 }
 
+.intro-anchor {
+  position: absolute;
+  top: 58vh;
+  left: 0;
+  pointer-events: none;
+}
+
 .intro-sticky {
   position: sticky;
   top: 0;

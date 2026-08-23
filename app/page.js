@@ -218,7 +218,8 @@ export default function HomePage() {
 
       <ProcedureOverlay />
 
-      <section className="intro intro-scene section-light" id="sobre" data-intro-scene>
+      <section className="intro intro-scene section-light" data-intro-scene>
+        <span id="sobre" className="intro-anchor" aria-hidden="true"></span>
         <div className="intro-sticky">
           <div className="intro-symbol" aria-hidden="true">
             <i></i>
