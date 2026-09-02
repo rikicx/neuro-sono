@@ -46,28 +46,41 @@ export default function ReactionTest() {
     setLight("red");
     setIsEarly(false);
     setTriggerLabel("Aguarde…");
-    setMessage("Aguarde o verde.");
+    setMessage("Semáforo vermelho: não clique ainda. Espere ficar verde.");
     window.clearTimeout(waitTimerRef.current);
     waitTimerRef.current = window.setTimeout(
       () => {
         setPhase("go");
         setLight("green");
-        setTriggerLabel("Clique!");
-        setMessage("Agora!");
+        setTriggerLabel("Clique agora!");
+        setMessage("Verde! Clique no botão.");
         greenAtRef.current = performance.now();
       },
       MIN_WAIT_MS + Math.random() * (MAX_WAIT_MS - MIN_WAIT_MS),
     );
   };
 
-  const resetTest = () => {
+  const startPractice = () => {
+    setView("practice");
     setRound(0);
     setTimes([]);
     setIsEarly(false);
-    showReady("Iniciar rodada", "Toque para começar quando estiver pronto.");
+    showReady("Iniciar treino", "Rodada de treino: ela não conta para o resultado.");
+  };
+
+  const startTest = () => {
+    setView("test");
+    setRound(0);
+    setTimes([]);
+    setIsEarly(false);
+    showReady("Iniciar rodada 1", "Toque no botão para começar. Depois, espere o verde.");
   };
 
   const handleTriggerClick = () => {
+    if (phase === "practice-done") {
+      startTest();
+      return;
+    }
     if (phase === "ready") {
       beginWait();
       return;
@@ -75,26 +88,40 @@ export default function ReactionTest() {
     if (phase === "waiting") {
       window.clearTimeout(waitTimerRef.current);
       setIsEarly(true);
-      showReady("Tentar de novo", "Foi cedo, espere o verde desta vez.");
+      showReady(
+        view === "practice" ? "Repetir o treino" : "Tentar de novo",
+        "Você clicou antes do verde. Espere a luz verde acender.",
+      );
       return;
     }
     if (phase === "go") {
       const seconds = (performance.now() - greenAtRef.current) / 1000;
+      setLight("red");
+
+      if (view === "practice") {
+        window.clearTimeout(waitTimerRef.current);
+        setPhase("practice-done");
+        setIsEarly(false);
+        setTriggerLabel("Começar as 5 rodadas");
+        setMessage(`Boa! Seu treino foi ${seconds.toFixed(3)}s. Agora vem o teste que vale.`);
+        return;
+      }
+
       const nextTimes = [...times, seconds];
       setTimes(nextTimes);
       const nextRound = round + 1;
       setRound(nextRound);
-      setLight("red");
       if (nextRound >= TOTAL_ROUNDS) {
         setView("results");
       } else {
-        showReady("Próxima rodada", `Registrado ${seconds.toFixed(3)}s. Toque para continuar.`);
+        showReady(`Iniciar rodada ${nextRound + 1}`, `Registrado ${seconds.toFixed(3)}s. Toque para continuar.`);
       }
     }
   };
 
   const average = times.length ? times.reduce((total, value) => total + value, 0) / times.length : 0;
   const band = BANDS.find((candidate) => average <= candidate.max);
+  const isStageView = view === "practice" || view === "test";
 
   return (
     <div className="reaction-panel" data-reaction-root>
@@ -102,20 +129,13 @@ export default function ReactionTest() {
         <div className="reaction-intro" data-reaction-view="intro">
           <p className="reaction-eyebrow">Antes de começar</p>
           <ul className="reaction-rules">
-            <li>Você fará 5 rodadas.</li>
-            <li>O semáforo começa vermelho: aguarde ele ficar verde.</li>
-            <li>Assim que acender o verde, clique no botão o mais rápido que puder.</li>
-            <li>Clicar antes da hora não conta, é só tentar de novo.</li>
+            <li>Primeiro você faz 1 rodada de treino. Depois, 5 rodadas que valem.</li>
+            <li>O semáforo começa vermelho: não clique enquanto ele estiver aceso.</li>
+            <li>Assim que a luz verde acender, clique no botão redondo o mais rápido que puder.</li>
+            <li>Se clicar antes do verde, a rodada não conta — é só tentar de novo.</li>
           </ul>
-          <button
-            className="button button-accent"
-            type="button"
-            onClick={() => {
-              setView("test");
-              resetTest();
-            }}
-          >
-            Começar teste
+          <button className="button button-accent" type="button" onClick={startPractice}>
+            Fazer rodada de treino
             <svg viewBox="0 0 20 20" aria-hidden="true">
               <path d="M4 10h12M11 5l5 5-5 5" />
             </svg>
@@ -123,16 +143,26 @@ export default function ReactionTest() {
         </div>
       )}
 
-      {view === "test" && (
-        <div className="reaction-test" data-reaction-view="test">
+      {isStageView && (
+        <div className="reaction-test" data-reaction-view={view}>
           <div className="reaction-status">
             <span className="reaction-round">
-              Rodada <strong>{round + 1}</strong> de {TOTAL_ROUNDS}
+              {view === "practice" ? (
+                "Rodada de treino"
+              ) : (
+                <>
+                  Rodada <strong>{round + 1}</strong> de {TOTAL_ROUNDS}
+                </>
+              )}
             </span>
             <span className="reaction-message" aria-live="polite">
               {message}
             </span>
           </div>
+
+          <p className="reaction-instruction">
+            Quando a <strong>luz verde</strong> acender, clique no botão abaixo o mais rápido possível.
+          </p>
 
           <div className="reaction-stage">
             <div className="semaphore" data-reaction-light={light} aria-hidden="true">
@@ -140,6 +170,14 @@ export default function ReactionTest() {
               <span className="light light-yellow"></span>
               <span className="light light-green"></span>
             </div>
+
+            <svg
+              className={`reaction-arrow${phase === "go" ? " is-active" : ""}`}
+              viewBox="0 0 24 44"
+              aria-hidden="true"
+            >
+              <path d="M12 4v28M4 24l8 9 8-9" />
+            </svg>
 
             <button
               className={`reaction-trigger${phase === "go" ? " is-ready" : ""}${isEarly ? " is-early" : ""}`}
@@ -150,11 +188,13 @@ export default function ReactionTest() {
             </button>
           </div>
 
-          <ol className="reaction-history" aria-label="Tempos registrados">
-            {times.map((value, index) => (
-              <li key={index}>{value.toFixed(3)}s</li>
-            ))}
-          </ol>
+          {view === "test" && (
+            <ol className="reaction-history" aria-label="Tempos registrados">
+              {times.map((value, index) => (
+                <li key={index}>{value.toFixed(3)}s</li>
+              ))}
+            </ol>
+          )}
         </div>
       )}
 
@@ -175,14 +215,7 @@ export default function ReactionTest() {
             ))}
           </ol>
           <div className="reaction-actions">
-            <button
-              className="button button-accent"
-              type="button"
-              onClick={() => {
-                setView("test");
-                resetTest();
-              }}
-            >
+            <button className="button button-accent" type="button" onClick={startTest}>
               Testar novamente
               <svg viewBox="0 0 20 20" aria-hidden="true">
                 <path d="M4 10h12M11 5l5 5-5 5" />

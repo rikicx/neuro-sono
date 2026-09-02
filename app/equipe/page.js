@@ -33,6 +33,7 @@ const TEAM_GROUPS = [
     people: [
       { photo: "melina.webp", photoClass: "person-photo--melina", name: "Dra. Melina Frota", info: "CRM 194.310" },
       { photo: "vinicius.webp", name: "Dr. Vinicius Lopes Braga", info: "CRM 200.141" },
+      { photo: "pedro.webp", name: "Dr. Pedro Barbosa Oliveira", info: "CRM 202.914" },
     ],
   },
   {
@@ -156,6 +157,7 @@ export default function EquipePage() {
             <div data-reveal>
               <span>Polissonografia · PSG</span>
               <p>Isabel Cristina Durvanel Yogi</p>
+              <p>Kátia Zanchetta</p>
             </div>
             <div data-reveal>
               <span>Eletroencefalograma · EEG</span>
@@ -163,6 +165,9 @@ export default function EquipePage() {
               <p>Katia de Marco Santoro</p>
               <p>Paula Calmona</p>
               <p>Gisele dos Santos</p>
+              <p>Amanda Beck</p>
+              <p>Tainá Soares</p>
+              <p>Evelyn</p>
             </div>
           </div>
         </div>

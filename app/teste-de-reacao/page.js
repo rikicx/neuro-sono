@@ -39,6 +39,16 @@ export default function TesteDeReacaoPage() {
             </p>
             <span className="page-marker">01 · Teste de Reação</span>
           </div>
+
+          <div className="reaction-hero-figure" data-reveal>
+            <svg className="reaction-hero-semaphore" viewBox="0 0 64 152" aria-hidden="true">
+              <rect className="rh-housing" x="6" y="4" width="52" height="144" rx="26" />
+              <circle className="rh-red" cx="32" cy="36" r="15" />
+              <circle className="rh-amber" cx="32" cy="76" r="15" />
+              <circle className="rh-green" cx="32" cy="116" r="15" />
+            </svg>
+            <p>Acidentes de trânsito, por exemplo, têm alta associação com sono de má qualidade.</p>
+          </div>
         </div>
       </section>
 

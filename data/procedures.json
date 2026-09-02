@@ -21,7 +21,7 @@
             "type": "ul",
             "items": [
               "<strong>Basal.</strong> Para diagnóstico geral dos distúrbios do sono.",
-              "<strong>Domiciliar.</strong> Um técnico monta o equipamento na sua casa e retorna no dia seguinte para retirá-lo. É especialmente confiável quando a suspeita principal é apneia do sono.",
+              "<strong>Domiciliar.</strong> Você vem à clínica para a montagem do equipamento, volta para casa e dorme normalmente. Na manhã seguinte, retorna à clínica para a retirada do aparelho. É especialmente confiável quando a suspeita principal é apneia do sono.",
               "<strong>Titulação de CPAP, BiPAP ou Servo-Ventilador.</strong> Feita depois que o tratamento já foi indicado, para encontrar a pressão exata que elimina apneias, roncos e despertares.",
               "<strong>Pediátrica.</strong> Voltada para o diagnóstico de distúrbios do sono em crianças.",
               "<strong>Neurológica.</strong> Quando é preciso registrar a atividade de várias regiões do cérebro, com eletrodos por toda a cabeça."
@@ -34,7 +34,7 @@
         "blocks": [
           {
             "type": "p",
-            "html": "Se o exame for no laboratório, você passa a noite em um quarto preparado para isso, com cama confortável e banheiro privativo. Se for domiciliar, o próprio técnico leva o equipamento até você. O horário respeita o seu padrão de sono: quem dorme e acorda mais tarde, por exemplo, faz um exame estendido para acompanhar esse ritmo."
+            "html": "Se o exame for no laboratório, você passa a noite em um quarto preparado para isso, com cama confortável e banheiro privativo. Se for domiciliar, você vem à clínica para a montagem do equipamento e retorna na manhã seguinte para a retirada. O horário respeita o seu padrão de sono: quem dorme e acorda mais tarde, por exemplo, faz um exame estendido para acompanhar esse ritmo. Todos os exames são laudados por médicos neurofisiologistas."
           }
         ]
       }
@@ -207,7 +207,7 @@
         "blocks": [
           {
             "type": "p",
-            "html": "Tem como objetivo estudar as funções cognitivas — memória, atenção, planejamento, cálculo, entre outras — e sensório-motoras do paciente, por meio de baterias de testes psicométricos e neuropsicológicos. A Neuro-Sono utiliza a Bateria Neuropsicológica Luria-Nebraska para comparar o desempenho obtido com o que é esperado para a faixa etária, escolaridade e nível socioeconômico de cada paciente."
+            "html": "Tem como objetivo estudar as funções cognitivas — memória, atenção, planejamento, cálculo, entre outras — e sensório-motoras do paciente, por meio de baterias de testes psicométricos e neuropsicológicos. Utilizamos testes considerados padrão-ouro na avaliação neuropsicológica para comparar o desempenho obtido com o que é esperado para a faixa etária, escolaridade e nível socioeconômico de cada paciente."
           }
         ]
       },
@@ -223,7 +223,7 @@
     ],
     "ctaText": "Quer entender se a avaliação neuropsicológica faz sentido para o seu caso?",
     "ctaHref": "https://wa.me/5511940397143?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Avalia%C3%A7%C3%A3o%20Neuropsicol%C3%B3gica.",
-    "metaDescription": "O que é a Avaliação Neuropsicológica, a Bateria Luria-Nebraska e como ela ajuda a identificar alterações cognitivas na Clínica Neuro-Sono.",
+    "metaDescription": "O que é a Avaliação Neuropsicológica, como são aplicados os testes padrão-ouro e como ela ajuda a identificar alterações cognitivas na Clínica Neuro-Sono.",
     "metaTitle": "Avaliação Neuropsicológica — Neuro-Sono"
   },
   {

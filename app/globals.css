@@ -270,6 +270,9 @@ svg {
 
 .menu-button {
   min-height: 44px;
+  gap: 12px;
+  font-size: 14px;
+  letter-spacing: 0.14em;
 }
 
 .menu-symbol {
@@ -543,7 +546,9 @@ svg {
 
 .hero-eyebrow {
   margin-bottom: 30px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .hero h1 {
@@ -2126,6 +2131,70 @@ svg {
 
 .hero-compact .subpage-hero-bottom {
   margin-top: 40px;
+}
+
+.reaction-hero-figure {
+  position: absolute;
+  top: 128px;
+  right: 0;
+  display: flex;
+  width: 244px;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+}
+
+.reaction-hero-semaphore {
+  width: 104px;
+  height: auto;
+}
+
+.reaction-hero-semaphore .rh-housing {
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1.5;
+}
+
+.reaction-hero-semaphore .rh-red {
+  fill: rgba(229, 52, 43, 0.28);
+}
+
+.reaction-hero-semaphore .rh-amber {
+  fill: rgba(255, 255, 255, 0.12);
+}
+
+.reaction-hero-semaphore .rh-green {
+  fill: #16a34a;
+  filter: drop-shadow(0 0 12px rgba(22, 163, 74, 0.65));
+}
+
+.reaction-hero-figure p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 1180px) {
+  .reaction-hero-figure {
+    position: static;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    margin-top: 34px;
+    text-align: left;
+  }
+
+  .reaction-hero-semaphore {
+    width: 64px;
+    flex: none;
+  }
+
+  .reaction-hero-figure p {
+    max-width: 34ch;
+  }
 }
 
 .hero-rings {

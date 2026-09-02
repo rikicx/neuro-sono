@@ -9,7 +9,7 @@ export const metadata = {
 const PROCEDURES = [
   {
     number: "01",
-    motif: "pulse",
+    motif: "wave",
     eyebrow: "Estudo do sono",
     title: "Polissonografia",
     text: "Exame destacado pela Neuro-Sono para o estudo dos distúrbios do sono.",
@@ -195,7 +195,7 @@ export default function HomePage() {
               ) : (
                 <div className="exam-card-motif is-wave" aria-hidden="true">
                   <svg viewBox="0 0 120 60" preserveAspectRatio="none">
-                    <path d="M0 30h14l6-16 8 32 8-40 8 40 8-24 6 8h14" />
+                    <path d="M0 31 8 21 13 37 19 17 25 40 31 26 37 34 43 13 50 44 57 24 63 36 70 19 77 39 84 25 91 41 98 16 105 35 112 27 120 31" />
                   </svg>
                 </div>
               )}

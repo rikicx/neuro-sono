@@ -74,10 +74,40 @@
   font-weight: 600;
 }
 
+.reaction-instruction {
+  max-width: 44ch;
+  margin: 0 auto 26px;
+  color: rgba(11, 29, 53, 0.7);
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.reaction-instruction strong {
+  color: #16a34a;
+}
+
 .reaction-stage {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.reaction-arrow {
+  width: 26px;
+  height: 40px;
+  margin: -22px 0 6px;
+  fill: none;
+  stroke: rgba(11, 29, 53, 0.22);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 160ms ease, transform 160ms ease;
+}
+
+.reaction-arrow.is-active {
+  stroke: #16a34a;
+  transform: translateY(4px);
 }
 
 .semaphore {
@@ -85,29 +115,29 @@
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  width: 84px;
-  margin: 0 auto 40px;
+  width: 88px;
+  margin: 0 auto 18px;
   padding: 20px 0;
   background: var(--deep);
   border-radius: 100px;
 }
 
 .light {
-  width: 34px;
-  height: 34px;
-  background: rgba(255, 255, 255, 0.1);
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   transition: background 120ms ease, box-shadow 120ms ease;
 }
 
 [data-reaction-light="red"] .light-red {
-  background: #e2635c;
-  box-shadow: 0 0 22px 6px rgba(226, 99, 92, 0.5);
+  background: #e5342b;
+  box-shadow: 0 0 26px 8px rgba(229, 52, 43, 0.6);
 }
 
 [data-reaction-light="green"] .light-green {
-  background: var(--accent);
-  box-shadow: 0 0 26px 8px rgba(139, 217, 210, 0.55);
+  background: #16a34a;
+  box-shadow: 0 0 30px 10px rgba(22, 163, 74, 0.6);
 }
 
 .reaction-trigger {
@@ -135,12 +165,13 @@
 }
 
 .reaction-trigger.is-ready {
-  color: var(--deep);
-  background: var(--accent);
+  color: var(--white);
+  background: #16a34a;
+  box-shadow: 0 0 0 6px rgba(22, 163, 74, 0.18);
 }
 
 .reaction-trigger.is-early {
-  background: #b5514c;
+  background: #c02418;
 }
 
 .reaction-history {
