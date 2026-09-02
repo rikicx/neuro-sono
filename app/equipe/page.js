@@ -167,7 +167,7 @@ export default function EquipePage() {
               <p>Gisele dos Santos</p>
               <p>Amanda Beck</p>
               <p>Tainá Soares</p>
-              <p>Evelyn</p>
+              <p>Evelyn Tomas</p>
             </div>
           </div>
         </div>
