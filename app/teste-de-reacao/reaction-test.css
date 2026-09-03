@@ -102,7 +102,7 @@
   stroke-width: 2.4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke 160ms ease, transform 160ms ease;
+  transition: none;
 }
 
 .reaction-arrow.is-active {
@@ -127,7 +127,8 @@
   height: 36px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 50%;
-  transition: background 120ms ease, box-shadow 120ms ease;
+  /* The measured stimulus must appear instantly, without a color fade. */
+  transition: none;
 }
 
 [data-reaction-light="red"] .light-red {
@@ -156,7 +157,9 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 220ms ease, color 220ms ease, transform 220ms var(--ease);
+  touch-action: manipulation;
+  user-select: none;
+  transition: transform 220ms var(--ease);
 }
 
 .reaction-trigger:hover,

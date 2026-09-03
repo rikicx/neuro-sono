@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
 const TOTAL_ROUNDS = 5;
 const MIN_WAIT_MS = 1400;
@@ -29,32 +30,65 @@ export default function ReactionTest() {
   const [isEarly, setIsEarly] = useState(false);
 
   const waitTimerRef = useRef(0);
-  const greenAtRef = useRef(0);
+  const frameRef = useRef(0);
+  const greenAtRef = useRef(null);
+  const phaseRef = useRef("ready");
 
-  useEffect(() => () => window.clearTimeout(waitTimerRef.current), []);
+  const cancelWait = () => {
+    window.clearTimeout(waitTimerRef.current);
+    window.cancelAnimationFrame(frameRef.current);
+    greenAtRef.current = null;
+  };
+
+  useEffect(() => {
+    const interruptRound = () => {
+      if (phaseRef.current !== "waiting" && phaseRef.current !== "go") return;
+      showReady("Repetir rodada", "O teste foi pausado ao sair da tela. Toque para repetir esta rodada.");
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden) interruptRound();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", interruptRound);
+    return () => {
+      cancelWait();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", interruptRound);
+    };
+  }, []);
 
   const showReady = (label, text) => {
+    cancelWait();
+    phaseRef.current = "ready";
     setPhase("ready");
-    window.clearTimeout(waitTimerRef.current);
     setLight("red");
     setTriggerLabel(label);
     setMessage(text);
   };
 
   const beginWait = () => {
+    cancelWait();
+    phaseRef.current = "waiting";
     setPhase("waiting");
     setLight("red");
     setIsEarly(false);
     setTriggerLabel("Aguarde…");
     setMessage("Semáforo vermelho: não clique ainda. Espere ficar verde.");
-    window.clearTimeout(waitTimerRef.current);
     waitTimerRef.current = window.setTimeout(
       () => {
-        setPhase("go");
-        setLight("green");
-        setTriggerLabel("Clique agora!");
-        setMessage("Verde! Clique no botão.");
-        greenAtRef.current = performance.now();
+        frameRef.current = window.requestAnimationFrame(() => {
+          if (phaseRef.current !== "waiting" || document.hidden) return;
+          // Commit the instantaneous stimulus in this rendering frame before starting the clock.
+          // This is a browser-frame reference, not a measurement of physical display latency.
+          flushSync(() => {
+            setPhase("go");
+            setLight("green");
+            setTriggerLabel("Clique agora!");
+            setMessage("Verde! Clique no botão.");
+          });
+          greenAtRef.current = performance.now();
+          phaseRef.current = "go";
+        });
       },
       MIN_WAIT_MS + Math.random() * (MAX_WAIT_MS - MIN_WAIT_MS),
     );
@@ -76,17 +110,22 @@ export default function ReactionTest() {
     showReady("Iniciar rodada 1", "Toque no botão para começar. Depois, espere o verde.");
   };
 
-  const handleTriggerClick = () => {
-    if (phase === "practice-done") {
+  const handleTrigger = (event) => {
+    const now = performance.now();
+    // Use the input's timestamp so event dispatch work is not added to the response time.
+    const respondedAt = Number.isFinite(event?.timeStamp) && event.timeStamp > 0 && event.timeStamp <= now
+      ? event.timeStamp
+      : now;
+    const currentPhase = phaseRef.current;
+    if (currentPhase === "practice-done") {
       startTest();
       return;
     }
-    if (phase === "ready") {
+    if (currentPhase === "ready") {
       beginWait();
       return;
     }
-    if (phase === "waiting") {
-      window.clearTimeout(waitTimerRef.current);
+    if (currentPhase === "waiting" || (currentPhase === "go" && respondedAt < greenAtRef.current)) {
       setIsEarly(true);
       showReady(
         view === "practice" ? "Repetir o treino" : "Tentar de novo",
@@ -94,12 +133,15 @@ export default function ReactionTest() {
       );
       return;
     }
-    if (phase === "go") {
-      const seconds = (performance.now() - greenAtRef.current) / 1000;
+    if (currentPhase === "go" && greenAtRef.current !== null) {
+      const seconds = (respondedAt - greenAtRef.current) / 1000;
+      // Lock immediately, including before React commits, to avoid duplicate responses.
+      phaseRef.current = "recorded";
+      cancelWait();
       setLight("red");
 
       if (view === "practice") {
-        window.clearTimeout(waitTimerRef.current);
+        phaseRef.current = "practice-done";
         setPhase("practice-done");
         setIsEarly(false);
         setTriggerLabel("Começar as 5 rodadas");
@@ -117,6 +159,26 @@ export default function ReactionTest() {
         showReady(`Iniciar rodada ${nextRound + 1}`, `Registrado ${seconds.toFixed(3)}s. Toque para continuar.`);
       }
     }
+  };
+
+  const handlePointerDown = (event) => {
+    if (event.button !== 0 || event.isPrimary === false) return;
+    handleTrigger(event);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key !== " " && event.key !== "Enter") return;
+    event.preventDefault();
+    if (!event.repeat) handleTrigger(event);
+  };
+
+  const handleKeyUp = (event) => {
+    if (event.key === " " || event.key === "Enter") event.preventDefault();
+  };
+
+  const handleAccessibleClick = (event) => {
+    // Pointer clicks have already been handled on press. Keep virtual AT activation available.
+    if (event.detail === 0) handleTrigger(event);
   };
 
   const average = times.length ? times.reduce((total, value) => total + value, 0) / times.length : 0;
@@ -182,7 +244,10 @@ export default function ReactionTest() {
             <button
               className={`reaction-trigger${phase === "go" ? " is-ready" : ""}${isEarly ? " is-early" : ""}`}
               type="button"
-              onClick={handleTriggerClick}
+              onPointerDown={handlePointerDown}
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
+              onClick={handleAccessibleClick}
             >
               <span>{triggerLabel}</span>
             </button>
