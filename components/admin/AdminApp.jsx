@@ -1,0 +1,250 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { API_CONTRACTS, loadPrototype, mockRequest, savePrototype, seedData, TEAM_GROUPS } from "@/lib/admin-prototype";
+
+const NAV = [
+  ["Visão geral", "home", "grid"], ["Pacientes", "patients", "people"], ["Laudos", "reports", "report"], ["Usuários", "users", "user"],
+  ["Conteúdos", "content", "edit"], ["Equipe", "team", "team"],
+];
+
+function Icon({ name, size = 20 }) {
+  const paths = {
+    grid: <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></>,
+    people: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></>,
+    user: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
+    edit: <><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></>,
+    team: <><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M17 11h5M19.5 8.5v5"/></>,
+    plus: <path d="M12 5v14M5 12h14"/>, search: <><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,
+    bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>,
+    close: <path d="m6 6 12 12M18 6 6 18"/>, trash: <><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 11v6M14 11v6"/></>,
+    send: <><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></>, chevron: <path d="m9 18 6-6-6-6"/>,
+    logout: <><path d="M10 17l5-5-5-5M15 12H3"/><path d="M15 3h5a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-5"/></>,
+    download: <><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></>,
+    check: <path d="m5 12 4 4L19 6"/>, dots: <><circle cx="5" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/></>,
+    calendar: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></>,
+    report: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></>,
+  };
+  return <svg className="adm-icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
+}
+
+const emptyPatient = { name: "", email: "", phone: "", birth: "" };
+const emptyUser = { name: "", email: "", role: "Atendimento" };
+const emptyContent = { title: "", category: "Sono", excerpt: "", body: "", cover: "", status: "Rascunho" };
+const emptyMember = { name: "", type: "Médico", council: "CRM", registration: "", groups: [], photo: "", status: "Rascunho" };
+
+export default function AdminApp() {
+  const [session, setSession] = useState(false);
+  const [data, setData] = useState(seedData);
+  const [view, setView] = useState("home");
+  const [modal, setModal] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [toast, setToast] = useState("");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => { setData(loadPrototype()); setSession(sessionStorage.getItem("neuro-admin-session") === "1"); setReady(true); }, []);
+  useEffect(() => { if (ready) savePrototype(data); }, [data, ready]);
+  useEffect(() => { const closeOnEscape=(event)=>{if(event.key!=="Escape")return;if(modal)setModal(null);else if(selectedPatient)setSelectedPatient(null);else if(notificationsOpen)setNotificationsOpen(false);};window.addEventListener("keydown",closeOnEscape);return()=>window.removeEventListener("keydown",closeOnEscape);},[modal,selectedPatient,notificationsOpen]);
+  const notify = (message) => { setToast(message); window.setTimeout(() => setToast(""), 3200); };
+  const updateData = (key, updater) => setData((current) => ({ ...current, [key]: updater(current[key]) }));
+  const removeRecord = async () => {
+    const { collection, id, label } = modal;
+    await mockRequest(true);
+    updateData(collection, (items) => items.filter((item) => item.id !== id));
+    setModal(null); setSelectedPatient(null); notify(`${label} removido com sucesso.`);
+  };
+
+  if (!ready) return <div className="adm-loading">Carregando painel…</div>;
+  if (!session) return <Login onLogin={() => { sessionStorage.setItem("neuro-admin-session", "1"); setSession(true); }} />;
+
+  const page = {
+    home: <Dashboard data={data} go={setView} open={setModal} />,
+    patients: <Patients items={data.patients} update={updateData} open={setModal} select={setSelectedPatient} notify={notify} />,
+    reports: <Reports items={data.patients} update={updateData} notify={notify} />,
+    users: <Users items={data.users} update={updateData} open={setModal} notify={notify} />,
+    content: <Content items={data.content} update={updateData} open={setModal} notify={notify} />,
+    team: <Team items={data.team} update={updateData} open={setModal} notify={notify} />,
+  }[view];
+
+  return <div className="adm-root">
+    <Sidebar currentUser={data.users[0]} view={view} setView={(next) => { setView(next); setSelectedPatient(null); setNotificationsOpen(false); }} openAccount={() => setModal({ type: "account" })} logout={() => { sessionStorage.removeItem("neuro-admin-session"); setSession(false); }} />
+    <main className="adm-main">
+      <Topbar data={data} open={notificationsOpen} toggle={()=>setNotificationsOpen(value=>!value)} go={next=>{setView(next);setNotificationsOpen(false);}} />
+      <div className="adm-page">{page}</div>
+    </main>
+    {selectedPatient && <PatientDrawer patient={data.patients.find((p) => p.id === selectedPatient)} close={() => setSelectedPatient(null)} open={setModal} notify={notify} update={updateData} />}
+    {modal?.type === "confirm" && <ConfirmModal modal={modal} close={() => setModal(null)} confirm={removeRecord} />}
+    {modal?.type === "patient" && <RecordModal title="Novo paciente" submitLabel="Adicionar paciente" initial={emptyPatient} fields="patient" close={() => setModal(null)} onSubmit={async (values) => { await mockRequest(); updateData("patients", (items) => [{ ...values, id: `p${Date.now()}`, status: "Sem questionário", updated: "Agora" }, ...items]); setModal(null); notify("Paciente adicionado."); }} />}
+    {modal?.type === "user" && <RecordModal title="Adicionar usuário" submitLabel="Cadastrar usuário" initial={emptyUser} fields="user" close={() => setModal(null)} onSubmit={async (values) => { await mockRequest(); const { temporaryPassword, ...user } = values; updateData("users", (items) => [...items, { ...user, temporaryPasswordIssued: Boolean(temporaryPassword), id: `u${Date.now()}`, status: "Ativo", initials: values.name.split(" ").map((part) => part[0]).slice(0,2).join("") }]); setModal(null); notify("Usuário cadastrado com senha temporária."); }} />}
+    {modal?.type === "content" && <ContentModal record={modal.record} close={() => setModal(null)} save={(record) => { updateData("content", (items) => record.id ? items.map((item) => item.id === record.id ? record : item) : [{ ...record, id: `c${Date.now()}` }, ...items]); setModal(null); notify("Conteúdo salvo."); }} />}
+    {modal?.type === "member" && <MemberModal record={modal.record} close={() => setModal(null)} save={(record) => { updateData("team", (items) => record.id ? items.map((item) => item.id === record.id ? record : item) : [...items, { ...record, id: `t${Date.now()}` }]); setModal(null); notify("Profissional salvo na equipe."); }} />}
+    {modal?.type === "account" && <AccountModal user={data.users[0]} close={() => setModal(null)} save={(user) => { updateData("users", (items) => items.map((item, index) => index === 0 ? { ...item, ...user } : item)); setModal(null); notify("Suas informações foram atualizadas."); }} />}
+    {modal?.type === "invite" && <InviteModal patient={modal.patient} close={() => setModal(null)} sent={(settings) => { updateData("patients", (items) => items.map((item) => item.id === modal.patient.id ? { ...item, status: "Aguardando", updated: "Link criado agora", invitation: settings } : item)); notify("Link único criado para o paciente."); }} />}
+    {toast && <div className="adm-toast" role="status"><Icon name="check" size={17}/>{toast}</div>}
+  </div>;
+}
+
+function Login({ onLogin }) {
+  const [loading, setLoading] = useState(false);
+  const [recovering, setRecovering] = useState(false);
+  const submit = async (event) => { event.preventDefault(); setLoading(true); await mockRequest(true, 500); onLogin(); };
+  return <main className="adm-login">
+    <section className="login-brand"><img src="/assets/neuro-sono-logo.png" alt="Neuro-Sono"/><div><p>Área administrativa</p><h1>Cuidado organizado.<br/><em>Decisões mais claras.</em></h1></div><small>Protótipo para teste de usabilidade · dados demonstrativos</small></section>
+    <section className="login-card"><form onSubmit={submit}>
+      <p className="adm-eyebrow">Acesso da equipe</p><h2>Entre no painel</h2><p>Este login é exclusivo para profissionais e administrativos da clínica.</p>
+      <label>E-mail<input type="email" defaultValue="admin@neurosono.com.br" required autoComplete="email"/></label>
+      <label>Senha<input type="password" defaultValue="NeuroSono2026" required autoComplete="current-password"/></label>
+      <div className="login-options"><label className="checkline"><input type="checkbox"/>Lembrar de mim</label><button type="button" className="text-button" onClick={()=>setRecovering(true)}>Esqueci minha senha</button></div>
+      <button className="adm-primary adm-full" disabled={loading}>{loading ? "Entrando…" : "Entrar no painel"}<Icon name="chevron" size={17}/></button>
+      <p className="login-note">Neste protótipo, qualquer e-mail e senha válidos permitem acesso.</p>
+    </form></section>{recovering&&<RecoveryModal close={()=>setRecovering(false)}/>} 
+  </main>;
+}
+
+function RecoveryModal({close}) { const [email,setEmail]=useState("");const [sent,setSent]=useState(false);return <Modal title="Recuperar senha" close={close}>{sent?<div className="recovery-success"><div className="success-icon"><Icon name="check"/></div><h3>Confira seu e-mail</h3><p>Se houver uma conta vinculada a <strong>{email}</strong>, enviaremos as instruções para redefinir a senha.</p><button className="adm-primary" onClick={close}>Voltar ao login</button></div>:<form className="adm-form" onSubmit={async event=>{event.preventDefault();await mockRequest();setSent(true);}}><p className="form-intro">Digite o e-mail utilizado no painel. O link de recuperação terá validade limitada.</p><Field label="E-mail profissional" type="email" value={email} set={setEmail} required/><ModalActions close={close} label="Enviar instruções"/></form>}</Modal> }
+
+function AccountModal({ user, close, save }) {
+  const nameParts = (user?.name || "").trim().split(/\s+/);
+  const [firstName, setFirstName] = useState(nameParts.shift() || "");
+  const [lastName, setLastName] = useState(nameParts.join(" "));
+  const [email, setEmail] = useState(user?.email === "—" ? "" : user?.email || "");
+  const submit = async (event) => {
+    event.preventDefault();
+    const name = `${firstName.trim()} ${lastName.trim()}`.trim();
+    const initials = [firstName, lastName].filter(Boolean).map((part) => part.trim()[0]).join("").toUpperCase();
+    await mockRequest(true);
+    save({ name, email: email.trim(), initials });
+  };
+  return <Modal title="Minha conta" close={close}>
+    <form className="adm-form" onSubmit={submit}>
+      <p className="form-intro">Atualize as informações usadas para identificar você no painel.</p>
+      <div className="form-grid">
+        <Field label="Nome" value={firstName} set={setFirstName} required/>
+        <Field label="Sobrenome" value={lastName} set={setLastName} required/>
+      </div>
+      <Field label="E-mail" type="email" value={email} set={setEmail} required/>
+      <ModalActions close={close} label="Salvar alterações"/>
+    </form>
+  </Modal>;
+}
+
+function Sidebar({ currentUser, view, setView, openAccount, logout }) {
+  const displayName = currentUser?.name || "Minha conta";
+  const initials = currentUser?.initials || displayName.split(" ").map((part) => part[0]).slice(0, 2).join("");
+  return <aside className="adm-sidebar"><a className="adm-brand" href="/" aria-label="Ir ao site da Neuro-Sono"><img src="/assets/neuro-sono-logo.png" alt="Neuro-Sono"/></a>
+    <nav aria-label="Navegação do painel">{NAV.map(([label, id, icon]) => <button key={id} className={view === id ? "active" : ""} onClick={() => setView(id)}><Icon name={icon}/><span>{label}</span></button>)}</nav>
+    <div className="adm-profile"><button className="adm-profile-avatar" onClick={openAccount} title="Minha conta">{initials}</button><button className="adm-profile-details" onClick={openAccount} title="Editar minhas informações"><strong>{displayName}</strong><small>Minha conta</small></button><button onClick={logout} title="Sair"><Icon name="logout" size={18}/></button></div>
+  </aside>;
+}
+
+function Topbar({data,open,toggle,go}) {
+  const waiting=data.patients.filter(patient=>patient.status==="Aguardando").length;
+  const reviews=data.patients.filter(patient=>patient.status==="Revisão médica").length;
+  const drafts=data.content.filter(item=>item.status==="Rascunho").length;
+  const total=waiting+reviews+drafts;
+  return <header className="adm-topbar"><div><strong>Clínica Neuro-Sono</strong><span>Ambiente de demonstração</span></div><div className="notification-anchor"><button className="icon-button" aria-label="Notificações" aria-expanded={open} onClick={toggle}><Icon name="bell"/>{total>0&&<i>{total}</i>}</button>{open&&<section className="notification-popover"><header><div><p className="adm-eyebrow">Central</p><h2>Notificações</h2></div><button className="icon-button" aria-label="Fechar notificações" onClick={toggle}><Icon name="close" size={16}/></button></header><button onClick={()=>go("reports")}><i className="notice-dot urgent"/><span><strong>{reviews} laudo{reviews===1?"":"s"} aguardando revisão</strong><small>Abrir área médica</small></span><Icon name="chevron" size={15}/></button><button onClick={()=>go("patients")}><i className="notice-dot"/><span><strong>{waiting} questionário{waiting===1?"":"s"} sem resposta</strong><small>Ver pacientes e lembretes</small></span><Icon name="chevron" size={15}/></button><button onClick={()=>go("content")}><i className="notice-dot neutral"/><span><strong>{drafts} conteúdo{drafts===1?"":"s"} em rascunho</strong><small>Abrir conteúdos</small></span><Icon name="chevron" size={15}/></button></section>}</div></header>;
+}
+function PageTitle({ eyebrow, title, text, action, onAction }) { return <header className="adm-page-title"><div><p className="adm-eyebrow">{eyebrow}</p><h1>{title}</h1>{text && <p>{text}</p>}</div>{action && <button className="adm-primary" onClick={onAction}><Icon name="plus" size={17}/>{action}</button>}</header>; }
+
+function Dashboard({ data, go, open }) {
+  const stats = [[data.patients.length,"Pacientes","people"],[data.patients.filter(p=>p.status==="Aguardando").length,"Aguardando resposta","send"],[data.patients.filter(p=>p.status==="Revisão médica").length,"Para revisão médica","edit"],[data.content.filter(c=>c.status==="Publicado").length,"Conteúdos publicados","grid"]];
+  return <><PageTitle eyebrow="Visão geral" title="Bom dia, Henrique." text="Acompanhe o que precisa da sua atenção hoje."/>
+    <section className="stat-grid">{stats.map(([value,label,icon])=><article key={label}><div><Icon name={icon}/></div><strong>{String(value).padStart(2,"0")}</strong><span>{label}</span></article>)}</section>
+    <section className="adm-grid-two"><article className="adm-card"><header><div><p className="adm-eyebrow">Atividade recente</p><h2>Últimos movimentos</h2></div><button className="text-button" onClick={()=>go("patients")}>Ver pacientes</button></header><div className="activity-list">{data.activity.map(item=><div key={item.id}><i className={item.tone}/><div><strong>{item.text}</strong><span>{item.time}</span></div></div>)}</div></article>
+    <article className="adm-card quick-card"><header><div><p className="adm-eyebrow">Ações rápidas</p><h2>O que deseja fazer?</h2></div></header><button onClick={()=>go("reports")}><Icon name="report"/><span><strong>Elaborar laudo</strong><small>Revise respostas, síntese e registre a conclusão</small></span><Icon name="chevron"/></button><button onClick={()=>open({type:"patient"})}><Icon name="plus"/><span><strong>Adicionar paciente</strong><small>Crie um cadastro e envie o questionário</small></span><Icon name="chevron"/></button><button onClick={()=>open({type:"content"})}><Icon name="edit"/><span><strong>Novo conteúdo</strong><small>Prepare uma publicação para o site</small></span><Icon name="chevron"/></button><button onClick={()=>open({type:"member"})}><Icon name="team"/><span><strong>Editar equipe</strong><small>Atualize profissionais e categorias</small></span><Icon name="chevron"/></button></article></section>
+    <div className="prototype-banner"><strong>Protótipo conectado aos contratos de API</strong><span>As ações usam dados demonstrativos locais. Na implantação, serão ligadas às rotas seguras do backend.</span><code>{API_CONTRACTS.invitations}</code></div></>;
+}
+
+function Searchbar({ value, setValue, placeholder }) { return <label className="adm-search"><Icon name="search" size={18}/><input value={value} onChange={e=>setValue(e.target.value)} placeholder={placeholder}/></label>; }
+function Status({ children }) { return <span className={`status status-${children.toLowerCase().replaceAll(" ","-").normalize("NFD").replace(/[\u0300-\u036f]/g,"")}`}>{children}</span>; }
+
+function Patients({ items, update, open, select, notify }) {
+  const [query,setQuery]=useState(""); const filtered=items.filter(p=>`${p.name} ${p.email}`.toLowerCase().includes(query.toLowerCase()));
+  return <><PageTitle eyebrow="Gestão de pacientes" title="Pacientes" text="Cadastros, questionários e acompanhamentos em um só lugar." action="Novo paciente" onAction={()=>open({type:"patient"})}/>
+    <div className="adm-toolbar"><Searchbar value={query} setValue={setQuery} placeholder="Buscar por nome ou e-mail"/><span>{filtered.length} pacientes</span></div>
+    <div className="adm-table-wrap"><table className="adm-table"><thead><tr><th>Paciente</th><th>Contato</th><th>Status do questionário</th><th>Última atividade</th><th><span className="sr-only">Ações</span></th></tr></thead><tbody>{filtered.map(p=><tr key={p.id}><td><button className="person-link" onClick={()=>select(p.id)}><Avatar name={p.name}/><strong>{p.name}</strong></button></td><td><span>{p.email}</span><small>{p.phone}</small></td><td><Status>{p.status}</Status></td><td>{p.updated}</td><td><div className="row-actions"><button title="Enviar questionário" onClick={()=>open({type:"invite",patient:p})}><Icon name="send" size={17}/></button><button title="Excluir paciente" onClick={()=>open({type:"confirm",collection:"patients",id:p.id,label:p.name,title:"Remover paciente?",description:"O cadastro será removido deste protótipo. Em produção, registros clínicos seguirão a política de retenção e auditoria."})}><Icon name="trash" size={17}/></button><button title="Ver paciente" onClick={()=>select(p.id)}><Icon name="chevron" size={17}/></button></div></td></tr>)}</tbody></table>{!filtered.length&&<Empty text="Nenhum paciente encontrado."/>}</div>
+  </>;
+}
+
+function Reports({items,update,notify}) {
+  const reportable=items.filter(patient=>patient.answers);
+  const firstPending=reportable.find(patient=>!patient.conclusion)||reportable[0];
+  const [selected,setSelected]=useState(firstPending?.id||"");
+  const patient=reportable.find(item=>item.id===selected)||firstPending;
+  const [draft,setDraft]=useState(patient?.conclusionDraft||patient?.conclusion||"");
+  useEffect(()=>{setDraft(patient?.conclusionDraft||patient?.conclusion||"");},[patient?.id,patient?.conclusionDraft,patient?.conclusion]);
+  const save=(finished)=>{if(!patient||!draft.trim())return;update("patients",list=>list.map(item=>item.id===patient.id?{...item,conclusionDraft:finished?"":draft.trim(),conclusion:finished?draft.trim():item.conclusion,doctor:finished?"Dr. Gilmar Fernandes do Prado · CRM 49.905":item.doctor,status:finished?"Concluído":"Revisão médica",updated:finished?"Laudo concluído agora":"Rascunho salvo agora"}:item));notify(finished?"Laudo concluído e assinado no protótipo.":"Rascunho do laudo salvo.");};
+  return <><PageTitle eyebrow="Área médica" title="Laudos" text="Revise o questionário e a síntese assistiva antes de registrar sua conclusão clínica."/><div className="report-layout"><aside className="report-list"><header><strong>Questionários respondidos</strong><span>{reportable.filter(item=>!item.conclusion).length} pendentes</span></header>{reportable.map(item=><button key={item.id} className={item.id===patient?.id?"active":""} onClick={()=>setSelected(item.id)}><Avatar name={item.name}/><span><strong>{item.name}</strong><small>{item.conclusion?"Laudo concluído":"Aguardando laudo"}</small></span><Status>{item.conclusion?"Concluído":"Revisão médica"}</Status></button>)}</aside>{patient?<section className="report-workspace"><header><div><p className="adm-eyebrow">Paciente selecionado</p><h2>{patient.name}</h2><span>{patient.birth} · Questionário de Sono Adulto</span></div><button className="adm-secondary" onClick={()=>window.print()}><Icon name="download" size={16}/>Imprimir</button></header><section className="report-summary"><p className="adm-eyebrow">Síntese assistiva</p><p>{patient.synthesis||"Síntese ainda não disponível."}</p><span>Material de apoio. A decisão clínica é responsabilidade do médico.</span></section><details className="report-answers"><summary>Consultar respostas completas</summary><FormSections answers={patient.answers}/></details><label className="report-field">Conclusão médica<textarea rows="9" value={draft} onChange={event=>setDraft(event.target.value)} placeholder="Registre aqui o laudo e a conclusão clínica." disabled={Boolean(patient.conclusion)}/></label><div className="report-doctor"><div><span>Profissional responsável</span><strong>Dr. Gilmar Fernandes do Prado</strong><small>CRM 49.905</small></div>{patient.conclusion?<Status>Concluído</Status>:<div><button className="adm-secondary" disabled={!draft.trim()} onClick={()=>save(false)}>Salvar rascunho</button><button className="adm-primary" disabled={!draft.trim()} onClick={()=>save(true)}>Concluir e assinar</button></div>}</div></section>:<Empty text="Nenhum questionário respondido para elaborar laudo."/>}</div></>;
+}
+
+function Users({items,open}) { const [query,setQuery]=useState(""); const filtered=items.filter(i=>i.name.toLowerCase().includes(query.toLowerCase())); return <><PageTitle eyebrow="Acesso e permissões" title="Usuários" text="Controle quem pode acessar as informações da clínica." action="Adicionar usuário" onAction={()=>open({type:"user"})}/><div className="adm-toolbar"><Searchbar value={query} setValue={setQuery} placeholder="Buscar usuário"/><span>{items.length} acessos</span></div><div className="adm-table-wrap"><table className="adm-table"><thead><tr><th>Usuário</th><th>E-mail</th><th>Perfil</th><th>Status</th><th></th></tr></thead><tbody>{filtered.map(u=><tr key={u.id}><td><div className="person-link"><Avatar name={u.name}/><strong>{u.name}</strong></div></td><td>{u.email}</td><td>{u.role}</td><td><Status>{u.status}</Status></td><td><div className="row-actions"><button title="Remover usuário" onClick={()=>open({type:"confirm",collection:"users",id:u.id,label:u.name,title:"Remover acesso?",description:`${u.name} não poderá mais entrar no painel. Esta ação exige confirmação.`})}><Icon name="trash" size={17}/></button></div></td></tr>)}</tbody></table></div></> }
+
+function Content({items,open}) { const [query,setQuery]=useState(""); const filtered=items.filter(i=>i.title.toLowerCase().includes(query.toLowerCase())); return <><PageTitle eyebrow="Conteúdo do site" title="Blog e artigos" text="Crie, revise e publique conteúdos no site da Neuro-Sono." action="Novo conteúdo" onAction={()=>open({type:"content"})}/><div className="adm-toolbar"><Searchbar value={query} setValue={setQuery} placeholder="Buscar conteúdo"/><span>{items.length} conteúdos</span></div><div className="content-grid">{filtered.map(item=><article className="content-card" key={item.id}><div className={`content-cover${item.cover?" has-image":""}`} style={item.cover?{backgroundImage:`linear-gradient(180deg,transparent,rgba(4,20,34,.72)),url(${item.cover})`}:undefined}><span>{item.category}</span></div><div><Status>{item.status}</Status><h2>{item.title}</h2><p>{item.excerpt}</p><footer><span>Atualizado em {item.updated}</span><button onClick={()=>open({type:"content",record:item})}>Editar <Icon name="chevron" size={15}/></button></footer></div></article>)}</div></> }
+
+function Team({items,open}) { const [group,setGroup]=useState("Todos os grupos"); const filtered=group==="Todos os grupos"?items:items.filter(i=>i.groups.includes(group)); return <><PageTitle eyebrow="Diretório público" title="Equipe" text="Edite profissionais, registros e a posição de cada pessoa no site." action="Adicionar profissional" onAction={()=>open({type:"member"})}/><div className="adm-toolbar"><label className="select-label">Grupo<select value={group} onChange={e=>setGroup(e.target.value)}><option>Todos os grupos</option>{TEAM_GROUPS.map(g=><option key={g}>{g}</option>)}</select></label><span>{filtered.length} profissionais</span></div><div className="team-admin-grid">{filtered.map(m=><article key={m.id}>{m.photo?<img src={m.photo} alt=""/>:<Avatar name={m.name}/>}<div><Status>{m.status}</Status><h2>{m.name}</h2><p>{[m.type,m.council&&`${m.council} ${m.registration}`].filter(Boolean).join(" · ")}</p><div className="group-tags">{m.groups.map(g=><span key={g}>{g}</span>)}</div><button className="adm-secondary" onClick={()=>open({type:"member",record:m})}>Editar profissional</button></div></article>)}</div></> }
+
+function PatientDrawer({patient,close,open,notify,update}) {
+  const [tab,setTab]=useState("overview"); if(!patient)return null;
+  return <div className="drawer-layer" role="dialog" aria-modal="true" aria-label={`Paciente ${patient.name}`}><button className="drawer-backdrop" onClick={close} aria-label="Fechar"></button><aside className="patient-drawer"><header><button className="icon-button" onClick={close} aria-label="Fechar"><Icon name="close"/></button><div><p className="adm-eyebrow">Paciente</p><h2>{patient.name}</h2></div><Status>{patient.status}</Status></header><nav><button className={tab==="overview"?"active":""} onClick={()=>setTab("overview")}>Visão geral</button><button className={tab==="form"?"active":""} onClick={()=>setTab("form")}>Questionário</button></nav>{tab==="overview"?<div className="drawer-content"><div className="patient-meta"><div><span>E-mail</span><strong>{patient.email}</strong></div><div><span>Telefone</span><strong>{patient.phone}</strong></div><div><span>Nascimento</span><strong>{patient.birth}</strong></div></div><section><h3>Questionário de Sono Adulto</h3><div className="submission-row"><div><Status>{patient.status}</Status><strong>Versão adulto 1.0</strong><span>{patient.updated}</span></div>{patient.answers?<button className="adm-secondary" onClick={()=>setTab("form")}>Abrir respostas</button>:patient.invitation?<button className="adm-secondary" onClick={()=>open({type:"invite",patient})}>Ver link e lembretes</button>:<button className="adm-primary" onClick={()=>open({type:"invite",patient})}><Icon name="send" size={16}/>Enviar questionário</button>}</div></section><LegacyUpload patient={patient} update={update} notify={notify}/><button className="danger-link" onClick={()=>open({type:"confirm",collection:"patients",id:patient.id,label:patient.name,title:"Remover paciente?",description:"Confirme a remoção do cadastro. Em produção, dados clínicos terão retenção e auditoria próprias."})}><Icon name="trash" size={17}/>Remover paciente</button></div>:patient.answers?<FormViewer patient={patient} update={update} notify={notify}/>:<QuestionnairePending patient={patient} open={open}/>}</aside></div>;
+}
+
+function QuestionnairePending({patient,open}) { const sent=Boolean(patient.invitation)||patient.status==="Aguardando"||patient.status==="Em preenchimento";return <div className="questionnaire-pending"><div><Icon name={sent?"send":"report"} size={28}/></div><p className="adm-eyebrow">Questionário de Sono Adulto</p><h3>{sent?"Aguardando preenchimento":"Questionário ainda não enviado"}</h3><p>{sent?`O link foi enviado e ainda não há respostas concluídas de ${patient.name}. As versões preenchida, síntese e laudo aparecerão após a conclusão.`:"Envie o link individual para que o paciente possa começar o preenchimento."}</p><button className={sent?"adm-secondary":"adm-primary"} onClick={()=>open({type:"invite",patient})}>{patient.invitation?"Ver link e lembretes":sent?"Reenviar questionário":"Enviar questionário"}</button></div> }
+
+function FormViewer({patient,update,notify}) {
+  const [version,setVersion]=useState("doctor"); const versions=[["doctor","Com médico"],["synthesis","Com síntese"],["answered","Respondido"]];
+  const hasAnswers=Boolean(patient.answers); const active=version;
+  return <div className="form-viewer"><div className="version-tabs" role="tablist">{versions.map(([id,label],index)=><button role="tab" aria-selected={active===id} className={active===id?"active":""} key={id} onClick={()=>setVersion(id)}><span>0{index+1}</span>{label}</button>)}</div><div className="form-actions"><span>Questionário de Sono Adulto · v1.0</span><button className="adm-secondary" onClick={()=>window.print()}><Icon name="download" size={16}/>Imprimir / PDF</button></div><article className="form-paper"><header><img src="/assets/neuro-sono-logo.png" alt="Neuro-Sono"/><div><strong>{active==="answered"?"Respostas do paciente":active==="synthesis"?"Respostas e síntese assistiva":"Pacote com conclusão médica"}</strong><span>Gerado para demonstração</span></div></header>{!hasAnswers?<Empty text="O paciente ainda não respondeu ao questionário."/>:<FormSections answers={patient.answers}/>} {active==="synthesis"&&<ClinicalBlock label="Síntese assistiva" warning="Conteúdo de apoio. Não é diagnóstico nem conclusão médica." text={patient.synthesis||"A síntese será gerada após o envio das respostas."}/>} {active==="doctor"&&<><ClinicalBlock label="Síntese assistiva revisada" warning="Separada da conclusão clínica." text={patient.synthesis||"Síntese ainda não disponível."}/><DoctorConclusion patient={patient} update={update} notify={notify}/></>}</article></div>;
+}
+function FormSections({answers}) { const sections=answers?Object.entries(answers):[["identity",[["Nome completo",""],["Data de nascimento",""],["Sexo",""],["Peso e altura",""]]],["history",[["Principal queixa",""],["Há quanto tempo",""]]],["symptoms",[["Problemas para pegar no sono",""],["Acorda durante a noite",""]]],["epworth",[["Escala de Sonolência de Epworth",""]]]]; const titles={identity:"Identificação",history:"História do sono",symptoms:"Sintomas",epworth:"Sonolência"}; return <>{sections.map(([key,rows])=><section className="answer-section" key={key}><h3>{titles[key]}</h3>{rows.map(([label,value])=><div className="answer-row" key={label}><span>{label}</span><strong>{value||"—"}</strong></div>)}</section>)}</> }
+function ClinicalBlock({label,warning,text,doctor}) { return <section className={`clinical-block${doctor?" doctor":""}`}><p className="adm-eyebrow">{label}</p><h3>{text}</h3><span>{warning}</span>{doctor&&<div className="signature-line">Assinatura digital do profissional</div>}</section> }
+
+function DoctorConclusion({patient,update,notify}) { const [text,setText]=useState(patient.conclusion||""); if(patient.conclusion)return <ClinicalBlock label="Conclusão médica" warning={`Registrada por ${patient.doctor||"profissional responsável"}`} text={patient.conclusion} doctor/>; return <section className="doctor-editor"><p className="adm-eyebrow">Conclusão médica</p><h3>Registrar revisão clínica</h3><textarea rows="6" value={text} onChange={e=>setText(e.target.value)} placeholder="Digite a conclusão clínica do profissional responsável."/><button className="adm-primary" disabled={!text.trim()} onClick={()=>{update("patients",items=>items.map(item=>item.id===patient.id?{...item,conclusion:text.trim(),doctor:"Dr. Gilmar Fernandes do Prado",status:"Concluído",updated:"Concluído agora"}:item));notify("Conclusão médica registrada no protótipo.");}}>Registrar conclusão</button><span>A síntese assistiva permanece separada deste parecer.</span></section> }
+
+function LegacyUpload({patient,update,notify}) { const ref=useRef(); const [file,setFile]=useState(""); return <section className="legacy-upload"><p className="adm-eyebrow">Digitalização de acervo</p><h3>Importar questionário antigo</h3><p>O arquivo será revisado campo a campo antes de entrar no prontuário.</p><input ref={ref} type="file" accept="application/pdf" hidden onChange={e=>setFile(e.target.files?.[0]?.name||"")}/><button className="adm-secondary" onClick={()=>ref.current?.click()}>{file?file:"Selecionar PDF"}</button>{file&&<button className="adm-primary" onClick={()=>{update("activity",items=>[{id:`a${Date.now()}`,text:`PDF de ${patient.name} pronto para revisão`,time:"Agora",tone:"info"},...items]);notify("PDF recebido. Extração demonstrativa iniciada.");setFile("");}}>Simular importação</button>}</section> }
+
+function RecordModal({title,submitLabel,initial,fields,close,onSubmit}) { const [form,setForm]=useState(()=>fields==="user"?{...initial,temporaryPassword:createTemporaryPassword()}:initial); const [loading,setLoading]=useState(false); const set=(key,value)=>setForm(f=>({...f,[key]:value})); return <Modal title={title} close={close}><form className="adm-form" onSubmit={async e=>{e.preventDefault();setLoading(true);await onSubmit(form);}}>{fields==="patient"?<><Field label="Nome completo" value={form.name} set={v=>set("name",v)} required/><div className="form-grid"><DateField label="Data de nascimento" value={form.birth} set={v=>set("birth",v)} required/><PhoneField label="Telefone" value={form.phone} set={v=>set("phone",v)} required/></div><Field label="E-mail" type="email" value={form.email} set={v=>set("email",v)} required/></>:<><Field label="Nome completo" value={form.name} set={v=>set("name",v)} required/><Field label="E-mail profissional" type="email" value={form.email} set={v=>set("email",v)} required/><Select label="Perfil de acesso" value={form.role} set={v=>set("role",v)} options={["Administrador","Médico","Atendimento","Editor de conteúdo"]}/><TemporaryPasswordField value={form.temporaryPassword} regenerate={()=>set("temporaryPassword",createTemporaryPassword())}/><p className="form-help">Senha temporária com letras maiúsculas, minúsculas e números. O usuário deverá alterá-la no primeiro acesso.</p></>}<ModalActions close={close} label={loading?"Salvando…":submitLabel} disabled={loading}/></form></Modal> }
+
+function InviteModal({patient,close,sent}) {
+  const [channel,setChannel]=useState(patient.invitation?.channel||"E-mail e WhatsApp");
+  const [reminder,setReminder]=useState(patient.invitation?.reminder||"2 dias");
+  const [loading,setLoading]=useState(false);
+  const [link,setLink]=useState(patient.invitation?.link||"");
+  const [copied,setCopied]=useState(false);
+  const linkInput=useRef();
+  const createLink=async event=>{event.preventDefault();setLoading(true);await mockRequest();const code=`${Math.random().toString(36).slice(2,6)}-${Math.random().toString(36).slice(2,5)}`.toUpperCase();const generated=`${window.location.origin}/q/${code}`;setLink(generated);sent({channel,reminder,expiresIn:7,link:generated,code});setLoading(false);};
+  const copyLink=async()=>{let success=false;if(linkInput.current){linkInput.current.focus();linkInput.current.select();linkInput.current.setSelectionRange(0,link.length);success=document.execCommand("copy");}if(!success){try{await navigator.clipboard.writeText(link);success=true;}catch{}}setCopied(success);window.setTimeout(()=>setCopied(false),1800);};
+  return <Modal title={link?"Link do questionário":"Enviar questionário"} close={close}>{link?<div className="invite-success"><div className="success-icon"><Icon name="check"/></div><p className="adm-eyebrow">Pronto para enviar</p><h3>O paciente não precisa criar conta</h3><p>Ao abrir este link único, {patient.name.split(" ")[0]} entra diretamente no questionário — sem login e sem senha.</p><label>Link reduzido<div><input ref={linkInput} value={link} readOnly/><button type="button" className={`adm-secondary${copied?" copied":""}`} onClick={copyLink}>{copied?<><Icon name="check" size={15}/>Copiado</>:"Copiar"}</button></div></label><dl><div><dt>Envio</dt><dd>{channel}</dd></div><div><dt>Lembrete</dt><dd>{reminder}</dd></div><div><dt>Validade</dt><dd>7 dias</dd></div></dl><div className="info-box">No backend, o código será criptograficamente seguro, armazenado como hash, revogável e vinculado somente a este convite.</div><div className="modal-actions"><a className="adm-secondary" href={link} target="_blank" rel="noreferrer">Abrir como paciente</a><button className="adm-primary" onClick={close}>Concluir</button></div></div>:<form className="adm-form" onSubmit={createLink}><div className="recipient"><Avatar name={patient.name}/><div><strong>{patient.name}</strong><span>{patient.email} · {patient.phone}</span></div></div><Select label="Enviar por" value={channel} set={setChannel} options={["E-mail e WhatsApp","Somente e-mail","Somente WhatsApp"]}/><Select label="Lembrete automático" value={reminder} set={setReminder} options={["1 dia","2 dias","3 dias","Sem lembrete"]}/><div className="info-box">O painel cria um endereço curto e exclusivo. O paciente acessa diretamente; somente a equipe utiliza login.</div><ModalActions close={close} label={loading?"Criando…":"Criar link único"} disabled={loading}/></form>}</Modal>
+}
+
+function ContentModal({record,close,save}) {
+  const [form,setForm]=useState(record||emptyContent);const editor=useRef();const coverInput=useRef();const bodyImageInput=useRef();const set=(key,value)=>setForm(current=>({...current,[key]:value}));
+  const readImage=(file,done)=>{if(!file)return;const reader=new FileReader();reader.onload=()=>done(String(reader.result));reader.readAsDataURL(file);};
+  const command=(name,value=null)=>{editor.current?.focus();document.execCommand(name,false,value);set("body",editor.current?.innerHTML||"");};
+  const insertBodyImage=file=>readImage(file,source=>{const current=editor.current?.innerHTML||form.body;const next=`${current}<figure><img src="${source}" alt="Imagem do artigo"><figcaption>Legenda da imagem</figcaption></figure>`;if(editor.current)editor.current.innerHTML=next;set("body",next);});
+  return <Modal title={record?"Editar conteúdo":"Novo conteúdo"} close={close} wide><form className="adm-form blog-form" onSubmit={event=>{event.preventDefault();save({...form,body:editor.current?.innerHTML||form.body,updated:"Agora"});}}><Field label="Título" value={form.title} set={value=>set("title",value)} required/><div className="form-grid"><Select label="Categoria" value={form.category} set={value=>set("category",value)} options={["Sono","Exames","Neurologia","Orientação"]}/><Select label="Publicação" value={form.status} set={value=>set("status",value)} options={["Rascunho","Publicado"]}/></div><Field label="Resumo para a listagem" value={form.excerpt} set={value=>set("excerpt",value)} required/><section className="cover-editor"><div className={form.cover?"has-cover":""} style={form.cover?{backgroundImage:`url(${form.cover})`}:undefined}>{!form.cover&&<><Icon name="edit"/><span>Imagem de capa</span></>}</div><input ref={coverInput} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>readImage(event.target.files?.[0],source=>set("cover",source))}/><div><button type="button" className="adm-secondary" onClick={()=>coverInput.current?.click()}>{form.cover?"Trocar imagem de capa":"Adicionar imagem de capa"}</button>{form.cover&&<button type="button" className="text-button" onClick={()=>set("cover","")}>Remover</button>}<small>JPEG, PNG ou WebP. Recomenda-se imagem horizontal.</small></div></section><label className="editor-label">Conteúdo do artigo</label><div className="editor-shell"><div className="editor-toolbar" role="toolbar" aria-label="Formatação do texto"><button type="button" onClick={()=>command("formatBlock","h2")}>Título</button><button type="button" onClick={()=>command("formatBlock","p")}>Texto</button><button type="button" onClick={()=>command("bold")}><strong>B</strong></button><button type="button" onClick={()=>command("italic")}><em>I</em></button><button type="button" onClick={()=>command("insertUnorderedList")}>• Lista</button><button type="button" onClick={()=>bodyImageInput.current?.click()}><Icon name="edit" size={14}/>Imagem</button><input ref={bodyImageInput} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>insertBodyImage(event.target.files?.[0])}/></div><div ref={editor} className="rich-editor" contentEditable suppressContentEditableWarning data-placeholder="Comece a escrever o artigo…" dangerouslySetInnerHTML={{__html:form.body}}/></div><p className="form-help">Selecione um trecho para aplicar negrito, itálico, título ou lista. Imagens podem ser inseridas diretamente no texto.</p><ModalActions close={close} label="Salvar conteúdo"/></form></Modal>
+}
+
+function MemberModal({record,close,save}) { const [form,setForm]=useState(record||emptyMember); const file=useRef(); const set=(k,v)=>setForm(f=>({...f,[k]:v})); const toggle=g=>set("groups",form.groups.includes(g)?form.groups.filter(x=>x!==g):[...form.groups,g]); const loadPhoto=e=>{const chosen=e.target.files?.[0];if(!chosen)return;const reader=new FileReader();reader.onload=()=>set("photo",String(reader.result));reader.readAsDataURL(chosen);}; return <Modal title={record?"Editar profissional":"Adicionar profissional"} close={close} wide><form className="adm-form" onSubmit={e=>{e.preventDefault();save(form);}}><div className="photo-field"><div>{form.photo?<img src={form.photo} alt="Prévia"/>:<Avatar name={form.name||"Foto"}/>}</div><input ref={file} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={loadPhoto}/><button type="button" className="adm-secondary" onClick={()=>file.current?.click()}>Escolher foto</button><span>JPEG, PNG ou WebP</span></div><Field label="Nome para exibição" value={form.name} set={v=>set("name",v)} required/><div className="form-grid"><Select label="Tipo" value={form.type} set={v=>set("type",v)} options={["Médico","Psicóloga","Fisioterapeuta","Dentista","Técnica","Outro"]}/><Select label="Status no site" value={form.status} set={v=>set("status",v)} options={["Rascunho","Publicado","Arquivado"]}/></div><div className="form-grid"><Select label="Conselho" value={form.council} set={v=>set("council",v)} options={["","CRM","CRP","CREFITO","CRO","Outro"]}/><Field label="Número de registro" value={form.registration} set={v=>set("registration",v)}/></div><fieldset><legend>Grupos da equipe</legend><p>Uma pessoa pode participar de mais de um grupo sem duplicar o cadastro.</p><div className="group-checks">{TEAM_GROUPS.map(g=><label key={g}><input type="checkbox" checked={form.groups.includes(g)} onChange={()=>toggle(g)}/><span>{g}</span></label>)}</div></fieldset><ModalActions close={close} label="Salvar profissional"/></form></Modal> }
+
+function Modal({title,close,wide,children}) { useEffect(()=>{const handleEscape=event=>{if(event.key==="Escape")close();};window.addEventListener("keydown",handleEscape);return()=>window.removeEventListener("keydown",handleEscape);},[close]);return <div className="modal-layer" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button className="modal-backdrop" onClick={close} aria-label="Fechar"></button><section className={`adm-modal${wide?" wide":""}`}><header><div><p className="adm-eyebrow">Neuro-Sono</p><h2 id="modal-title">{title}</h2></div><button className="icon-button" onClick={close} aria-label="Fechar"><Icon name="close"/></button></header>{children}</section></div> }
+function ConfirmModal({modal,close,confirm}) { const [loading,setLoading]=useState(false); return <Modal title={modal.title} close={close}><div className="confirm-body"><div className="warning-icon"><Icon name="trash"/></div><p>{modal.description}</p><strong>{modal.label}</strong><div className="modal-actions"><button className="adm-secondary" onClick={close}>Cancelar</button><button className="adm-danger" disabled={loading} onClick={async()=>{setLoading(true);await confirm();}}>{loading?"Removendo…":"Sim, remover"}</button></div></div></Modal> }
+function ModalActions({close,label,disabled}) { return <div className="modal-actions"><button type="button" className="adm-secondary" onClick={close}>Cancelar</button><button className="adm-primary" disabled={disabled}>{label}</button></div> }
+function Field({label,value,set,type="text",required}) { return <label>{label}<input type={type} value={value} onChange={e=>set(e.target.value)} required={required}/></label> }
+function createTemporaryPassword() { const lower="abcdefghijkmnopqrstuvwxyz";const upper="ABCDEFGHJKLMNPQRSTUVWXYZ";const digits="23456789";const all=lower+upper+digits;const pick=characters=>characters[Math.floor(Math.random()*characters.length)];const password=[pick(upper),pick(lower),pick(digits),...Array.from({length:9},()=>pick(all))];return password.sort(()=>Math.random()-.5).join(""); }
+function TemporaryPasswordField({value,regenerate}) { const input=useRef();const [copied,setCopied]=useState(false);const copy=()=>{input.current?.select();input.current?.setSelectionRange(0,value.length);const success=document.execCommand("copy");setCopied(success);window.setTimeout(()=>setCopied(false),1600);};return <label>Senha temporária<span className="credential-field"><input ref={input} value={value} readOnly/><button type="button" onClick={copy}>{copied?"Copiada":"Copiar"}</button><button type="button" onClick={regenerate}>Gerar outra</button></span></label> }
+function DateField({label,value,set,required}) {
+  const picker=useRef();
+  const mask=raw=>{const digits=raw.replace(/\D/g,"").slice(0,8);return [digits.slice(0,2),digits.slice(2,4),digits.slice(4,8)].filter(Boolean).join("/");};
+  const toIso=display=>{const [day,month,year]=display.split("/");return day&&month&&year?.length===4?`${year}-${month}-${day}`:"";};
+  const fromIso=iso=>{const [year,month,day]=iso.split("-");return year&&month&&day?`${day}/${month}/${year}`:"";};
+  const validate=event=>{const match=value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(!match){event.currentTarget.setCustomValidity("Digite a data completa no formato DD/MM/AAAA.");return;}const [,day,month,year]=match;const date=new Date(Number(year),Number(month)-1,Number(day));const valid=date.getFullYear()===Number(year)&&date.getMonth()===Number(month)-1&&date.getDate()===Number(day)&&date<=new Date();event.currentTarget.setCustomValidity(valid?"":"Digite uma data de nascimento válida.");};
+  return <label>{label}<span className="date-field"><input type="text" inputMode="numeric" autoComplete="bday" placeholder="DD/MM/AAAA" value={value} onChange={e=>{e.currentTarget.setCustomValidity("");set(mask(e.target.value));}} onBlur={validate} pattern="\d{2}/\d{2}/\d{4}" maxLength="10" required={required}/><button type="button" aria-label="Abrir calendário" onClick={()=>picker.current?.showPicker?.()}><Icon name="calendar" size={18}/></button><input ref={picker} className="native-date-picker" type="date" tabIndex="-1" aria-hidden="true" max={new Date().toISOString().slice(0,10)} value={toIso(value)} onChange={e=>set(fromIso(e.target.value))}/></span></label>;
+}
+function PhoneField({label,value,set,required}) {
+  const mask=raw=>{const digits=raw.replace(/\D/g,"").slice(0,11);if(!digits)return "";if(digits.length<3)return `(${digits}`;const area=`(${digits.slice(0,2)})`;const number=digits.slice(2);if(number.length<=4)return `${area} ${number}`;const split=number.length<=8?4:5;return `${area} ${number.slice(0,split)}-${number.slice(split)}`;};
+  return <label>{label}<input type="tel" inputMode="numeric" autoComplete="tel" placeholder="(00) 00000-0000" value={value} onChange={e=>set(mask(e.target.value))} pattern="\(\d{2}\) \d{4,5}-\d{4}" maxLength="15" required={required}/></label>;
+}
+function Select({label,value,set,options}) { return <label>{label}<select value={value} onChange={e=>set(e.target.value)}>{options.map(o=><option key={o} value={o}>{o||"Não informado"}</option>)}</select></label> }
+function Avatar({name}) { return <span className="avatar">{name.split(" ").filter(Boolean).map(p=>p[0]).slice(0,2).join("").toUpperCase()}</span> }
+function Empty({text}) { return <div className="adm-empty"><Icon name="search"/><p>{text}</p></div> }

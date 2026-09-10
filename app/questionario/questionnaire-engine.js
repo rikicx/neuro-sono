@@ -2,7 +2,7 @@
 
 export function initQuestionnaire() {
 
-const STORAGE_KEY = "neuro-sono-questionnaire-v5";
+const STORAGE_KEY = "neuro-sono-questionnaire-v6";
 
 const frequencyOptions = [
   ["never", "Nunca"],
@@ -727,6 +727,7 @@ const steps = [
 let state = loadState();
 let currentIndex = Math.min(state.currentIndex || 0, steps.length - 1);
 let answers = state.answers || {};
+let experienceMode = state.experienceMode || "";
 let typingTimer = 0;
 let autoAdvanceTimer = 0;
 
@@ -752,7 +753,7 @@ function loadState() {
 
 function saveState() {
   saveStatus?.classList.add("is-saving");
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentIndex, answers, updatedAt: new Date().toISOString() }));
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentIndex, answers, experienceMode, updatedAt: new Date().toISOString() }));
   window.setTimeout(() => saveStatus?.classList.remove("is-saving"), 450);
 }
 
@@ -885,12 +886,30 @@ function renderWelcome() {
         <li><strong>Salvamento automático</strong><span>Seu progresso fica neste dispositivo.</span></li>
         <li><strong>Você tem controle</strong><span>Revise e altere respostas antes de concluir.</span></li>
       </ul>
-      <button class="primary-action" type="button" data-start>
-        ${hasProgress ? "Continuar preenchimento" : "Começar questionário"}
-        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
-      </button>
+      <div class="experience-choice" role="group" aria-label="Escolha como prefere responder">
+        <button class="experience-option" type="button" data-experience="conversation">
+          <span class="experience-icon" aria-hidden="true">•••</span>
+          <span><strong>Conversa guiada</strong><small>Uma pergunta por vez, como em um chat.</small></span>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
+        </button>
+        <button class="experience-option" type="button" data-experience="long">
+          <span class="experience-icon experience-icon-form" aria-hidden="true">☷</span>
+          <span><strong>Formulário completo</strong><small>Veja todas as perguntas organizadas por assunto.</small></span>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
+        </button>
+      </div>
+      ${hasProgress ? `<p class="resume-note">Suas respostas salvas aparecem nos dois formatos.</p>` : ""}
     </article>`;
-  stage.querySelector("[data-start]").addEventListener("click", () => goTo(1));
+  stage.querySelectorAll("[data-experience]").forEach((button) => button.addEventListener("click", () => {
+    experienceMode = button.dataset.experience;
+    if (experienceMode === "long") {
+      currentIndex = Math.max(1, currentIndex);
+      saveState();
+      render();
+      return;
+    }
+    goTo(Math.max(1, currentIndex));
+  }));
 }
 
 function previousSummary() {
@@ -941,12 +960,19 @@ function renderStep(stepConfig) {
               </button>`}
           </div>
         </div>
+        <button class="mode-switch" type="button" data-switch-mode="long">Prefiro ver o formulário completo</button>
       </div>
     </form>`;
 
   const form = stage.querySelector("[data-step-form]");
   restoreForm(form, stepConfig);
   bindForm(form, stepConfig);
+  form.querySelector("[data-switch-mode]").addEventListener("click", () => {
+    collectForm(form, stepConfig);
+    experienceMode = "long";
+    saveState();
+    render();
+  });
   const typing = form.querySelector("[data-typing]");
   const reveal = form.querySelector("[data-conversation-reveal]");
   const revealConversation = () => {
@@ -1039,14 +1065,26 @@ function applyConditions(form) {
     const matches = fieldValue(form, name) === expected;
     element.hidden = element.dataset.showWhen ? !matches : matches;
   });
+  clearHiddenAnswers(form);
+}
+
+function clearHiddenAnswers(form) {
+  form.querySelectorAll("[hidden] input, [hidden] textarea, [hidden] select").forEach((element) => {
+    if (!element.name) return;
+    if (element.type === "radio" || element.type === "checkbox") element.checked = false;
+    else element.value = "";
+    delete answers[element.name];
+  });
 }
 
 function validateForm(form, stepConfig) {
   const requiredInvalid = [...form.querySelectorAll("[required]")].filter((element) => {
+    if (element.closest("[hidden]")) return false;
     if (element.type === "radio") return !form.querySelector(`[name="${CSS.escape(element.name)}"]:checked`);
     return !element.value.trim();
   });
   const formatInvalid = [...form.querySelectorAll("[data-mask]")].filter((element) => {
+    if (element.closest("[hidden]")) return false;
     if (!element.value && !element.required) return false;
     return element.dataset.mask === "date" ? !isValidMaskedDate(element.value) : !isValidMaskedTime(element.value);
   });
@@ -1066,6 +1104,114 @@ function validateForm(form, stepConfig) {
   unique[0]?.focus({ preventScroll: true });
   unique[0]?.scrollIntoView({ behavior: "smooth", block: "center" });
   return false;
+}
+
+function renderLongForm() {
+  const questionnaireSteps = steps.slice(1, -1);
+  sectionTitle.textContent = "Formulário completo";
+  sectionKicker.textContent = "Responda no seu ritmo";
+  progressLabel.textContent = "Formulário completo";
+  stage.innerHTML = `
+    <form class="long-form" data-long-form novalidate>
+      <div class="long-form-intro">
+        <div><span>Outra forma de responder</span><h2>Todas as perguntas, organizadas por assunto.</h2><p>As perguntas que não se aplicam a você serão ocultadas automaticamente.</p></div>
+        <button class="mode-switch" type="button" data-switch-mode="conversation">Prefiro a conversa guiada</button>
+      </div>
+      ${sections.slice(0, -1).map((section) => {
+        const sectionSteps = questionnaireSteps.map((item, index) => ({ item, index: index + 1 })).filter(({ item }) => item.section === section.id);
+        return `<section class="long-section" id="long-${section.id}">
+          <div class="long-section-heading"><span>${section.label}</span><h2>${sectionSteps[0]?.item.title || section.label}</h2></div>
+          <div class="long-section-questions">${sectionSteps.map(({ item, index }) => {
+            const questionText = typeof item.question === "function" ? item.question(answers) : item.question;
+            return `<article class="long-question" data-long-step="${index}">
+              <div class="long-question-copy"><span>${String(index).padStart(2, "0")}</span><div><h3>${escapeHtml(questionText)}</h3>${item.helper ? `<p>${item.helper}</p>` : ""}${item.optional ? `<small>Opcional</small>` : ""}</div></div>
+              <div class="long-answer">${item.content ? item.content() : ""}</div>
+            </article>`;
+          }).join("")}</div>
+        </section>`;
+      }).join("")}
+      <p class="form-error long-form-error" data-form-error role="alert"></p>
+      <div class="long-form-actions"><button class="primary-action" type="submit">Revisar respostas<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" /></svg></button></div>
+    </form>`;
+
+  const form = stage.querySelector("[data-long-form]");
+  restoreForm(form, {});
+  questionnaireSteps.forEach((item) => {
+    if (item.repeater) renderRepeater(form, item.repeater, answers[item.repeater] || []);
+  });
+
+  const syncVisibility = () => {
+    questionnaireSteps.forEach((item, offset) => {
+      const wrapper = form.querySelector(`[data-long-step="${offset + 1}"]`);
+      if (wrapper) wrapper.hidden = Boolean(item.when && !item.when(answers));
+    });
+    applyConditions(form);
+    clearHiddenAnswers(form);
+    updateLongProgress(form);
+  };
+  const collectLongForm = () => {
+    collectForm(form, {});
+    questionnaireSteps.forEach((item) => {
+      if (item.repeater) answers[item.repeater] = collectRepeater(form, item.repeater);
+    });
+  };
+
+  form.addEventListener("input", (event) => {
+    applyInputMask(event.target);
+    event.target?.removeAttribute?.("aria-invalid");
+    form.querySelector("[data-form-error]").textContent = "";
+    collectLongForm();
+    syncVisibility();
+    updateEpworth(form);
+    saveState();
+  });
+  form.addEventListener("change", () => {
+    collectLongForm();
+    syncVisibility();
+    updateEpworth(form);
+    saveState();
+  });
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    collectLongForm();
+    syncVisibility();
+    if (!validateForm(form, {})) return;
+    currentIndex = steps.length - 1;
+    saveState();
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  form.querySelector("[data-switch-mode]").addEventListener("click", () => {
+    collectLongForm();
+    experienceMode = "conversation";
+    currentIndex = Math.max(1, Math.min(currentIndex, steps.length - 2));
+    saveState();
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  form.querySelectorAll("[data-add-row]").forEach((button) => button.addEventListener("click", () => {
+    collectLongForm();
+    const name = button.closest("[data-long-step]") ? questionnaireSteps[Number(button.closest("[data-long-step]").dataset.longStep) - 1]?.repeater : "";
+    if (!name) return;
+    const rows = answers[name] || [];
+    rows.push({ name: "", dose: "", frequency: "" });
+    answers[name] = rows;
+    renderRepeater(form, name, rows);
+    saveState();
+  }));
+  syncVisibility();
+}
+
+function updateLongProgress(form) {
+  const visibleSteps = [...form.querySelectorAll("[data-long-step]:not([hidden])")];
+  const answeredSteps = visibleSteps.filter((wrapper) => [...wrapper.querySelectorAll("input, textarea, select")].some((element) => {
+    if (!element.name || element.closest("[hidden]")) return false;
+    return element.type === "radio" || element.type === "checkbox" ? element.checked : Boolean(element.value.trim());
+  }));
+  const progress = Math.round((answeredSteps.length / Math.max(visibleSteps.length, 1)) * 100);
+  progressBar.style.transform = `scaleX(${progress / 100})`;
+  mobileProgress.textContent = `${progress}%`;
+  progressDetail.textContent = `${progress}% respondido`;
 }
 
 function collectForm(form, stepConfig) {
@@ -1179,6 +1325,7 @@ function render() {
   renderProgress();
   if (current.welcome) renderWelcome();
   else if (current.review) renderReview();
+  else if (experienceMode === "long") renderLongForm();
   else renderStep(current);
 }
 
